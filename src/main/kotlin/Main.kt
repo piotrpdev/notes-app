@@ -1,7 +1,10 @@
+import mu.KotlinLogging
 import utils.ScannerInput
 import java.lang.System.exit
 import java.util.*
 import kotlin.system.exitProcess
+
+private val logger = KotlinLogging.logger {}
 
 val scanner = ScannerInput
 
@@ -23,23 +26,23 @@ fun mainMenu() : Int {
 }
 
 fun addNote(){
-    println("You chose Add Note")
+    logger.debug {"You chose Add Note"}
 }
 
 fun listNotes(){
-    println("You chose List Notes")
+    logger.debug {"You chose List Notes"}
 }
 
 fun updateNote(){
-    println("You chose Update Note")
+    logger.debug {"You chose Update Note"}
 }
 
 fun deleteNote(){
-    println("You chose Delete Note")
+    logger.debug {"You chose Delete Note"}
 }
 
 fun exitApp(){
-    println("Exiting...bye")
+    logger.debug {"Exiting...bye"}
     exitProcess(0)
 }
 
