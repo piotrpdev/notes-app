@@ -29,6 +29,8 @@ fun mainMenu() : Int {
          > |   5) List active notes         |
          > |   6) List archived notes       |
          > ----------------------------------
+         > |   7) List notes with priority  |
+         > ----------------------------------
          > |   0) Exit                      |
          > ----------------------------------
          > ==>> """.trimMargin(">")
@@ -55,6 +57,12 @@ fun listNotes(){
     println(noteAPI.listAllNotes())
 }
 
+fun listNotesByPriority(){
+    //logger.info { "listNotesByPriority() function invoked" }
+    val notePriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
+    println(noteAPI.listNotesBySelectedPriority(notePriority))
+}
+
 fun updateNote(){
     logger.debug {"You chose Update Note"}
 }
@@ -77,6 +85,7 @@ fun runMenu() {
             4  -> deleteNote()
             5 -> println(noteAPI.listActiveNotes())
             6 -> println(noteAPI.listArchivedNotes())
+            7 -> listNotesByPriority()
             0  -> exitApp()
             else -> println("Invalid option entered: $option")
         }
