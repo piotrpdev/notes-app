@@ -48,6 +48,18 @@ class NoteAPI {
 
     fun numberOfActiveNotes(): Int = notes.filter { it -> !it.isNoteArchived }.size
 
+    fun listNotesBySelectedPriority(priority: Int): String = if (notes.isEmpty() || numberOfNotesByPriority(priority) == 0) "No notes with priority"
+        else {
+            var listOfNotes = ""
+            for (i in notes.indices) {
+                if (notes[i].notePriority == priority) {
+                    listOfNotes += "${i}: ${notes[i]}\n"
+                }
+            }
+            listOfNotes
+        }
+
+    fun numberOfNotesByPriority(priority: Int): Int = notes.filter { it -> it.notePriority == priority }.size
 
     fun numberOfNotes(): Int {
         return notes.size

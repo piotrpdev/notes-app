@@ -134,4 +134,25 @@ class NoteAPITest {
         assertTrue(notesString.contains("swim"))
         assertTrue(notesString.contains("summer holiday"))
     }
+
+    // Test for findNoteByPriority
+    @Test
+    fun `listNotesBySelectedPriority returns No Notes with Priority Stored message when ArrayList is empty`() {
+        assertEquals(0, emptyNotes!!.numberOfNotes())
+        assertTrue(emptyNotes!!.listNotesBySelectedPriority(1).lowercase().contains("no notes with priority"))
+    }
+
+    @Test
+    fun `listNotesBySelectedPriority returns No Notes with Priority Stored message when ArrayList has no notes with priority stored`() {
+        assertEquals(5, populatedNotes!!.numberOfNotes())
+        assertTrue(populatedNotes!!.listNotesBySelectedPriority(2).lowercase().contains("no notes with priority"))
+    }
+
+    @Test
+    fun `listNotesBySelectedPriority returns Notes with Priority when ArrayList has notes with priority stored`() {
+        assertEquals(5, populatedNotes!!.numberOfNotes())
+        val notesString = populatedNotes!!.listNotesBySelectedPriority(4).lowercase()
+        assertTrue(notesString.contains("code app"))
+        assertTrue(notesString.contains("test app"))
+    }
 }
