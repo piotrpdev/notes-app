@@ -78,4 +78,60 @@ class NoteAPITest {
         assertTrue(notesString.contains("swim"))
         assertTrue(notesString.contains("summer holiday"))
     }
+
+    @Test
+    fun `listActiveNotes returns No Active Notes Stored message when ArrayList is empty`() {
+        assertEquals(0, emptyNotes!!.numberOfNotes())
+        assertTrue(emptyNotes!!.listActiveNotes().lowercase().contains("no active notes"))
+    }
+
+    @Test
+    fun `listActiveNotes returns No Active Notes Stored message when ArrayList has no active notes stored`() {
+        assertEquals(5, populatedNotes!!.numberOfNotes())
+        populatedNotes!!.findNote(0)!!.isNoteArchived = true
+        populatedNotes!!.findNote(1)!!.isNoteArchived = true
+        populatedNotes!!.findNote(2)!!.isNoteArchived = true
+        populatedNotes!!.findNote(3)!!.isNoteArchived = true
+        populatedNotes!!.findNote(4)!!.isNoteArchived = true
+        assertTrue(populatedNotes!!.listActiveNotes().lowercase().contains("no active notes"))
+    }
+
+    @Test
+    fun `listActiveNotes returns Active Notes when ArrayList has active notes stored`() {
+        assertEquals(5, populatedNotes!!.numberOfNotes())
+        val notesString = populatedNotes!!.listActiveNotes().lowercase()
+        assertTrue(notesString.contains("learning kotlin"))
+        assertTrue(notesString.contains("code app"))
+        assertTrue(notesString.contains("test app"))
+        assertTrue(notesString.contains("swim"))
+        assertTrue(notesString.contains("summer holiday"))
+    }
+
+    @Test
+    fun `listArchivedNotes returns No Archived Notes Stored message when ArrayList is empty`() {
+        assertEquals(0, emptyNotes!!.numberOfNotes())
+        assertTrue(emptyNotes!!.listArchivedNotes().lowercase().contains("no archived notes"))
+    }
+
+    @Test
+    fun `listArchivedNotes returns No Archived Notes Stored message when ArrayList has no archived notes stored`() {
+        assertEquals(5, populatedNotes!!.numberOfNotes())
+        assertTrue(populatedNotes!!.listArchivedNotes().lowercase().contains("no archived notes"))
+    }
+
+    @Test
+    fun `listArchivedNotes returns Archived Notes when ArrayList has archived notes stored`() {
+        assertEquals(5, populatedNotes!!.numberOfNotes())
+        populatedNotes!!.findNote(0)!!.isNoteArchived = true
+        populatedNotes!!.findNote(1)!!.isNoteArchived = true
+        populatedNotes!!.findNote(2)!!.isNoteArchived = true
+        populatedNotes!!.findNote(3)!!.isNoteArchived = true
+        populatedNotes!!.findNote(4)!!.isNoteArchived = true
+        val notesString = populatedNotes!!.listArchivedNotes().lowercase()
+        assertTrue(notesString.contains("learning kotlin"))
+        assertTrue(notesString.contains("code app"))
+        assertTrue(notesString.contains("test app"))
+        assertTrue(notesString.contains("swim"))
+        assertTrue(notesString.contains("summer holiday"))
+    }
 }

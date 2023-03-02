@@ -26,6 +26,9 @@ fun mainMenu() : Int {
          > |   3) Update a note             |
          > |   4) Delete a note             |
          > ----------------------------------
+         > |   5) List active notes         |
+         > |   6) List archived notes       |
+         > ----------------------------------
          > |   0) Exit                      |
          > ----------------------------------
          > ==>> """.trimMargin(">")
@@ -72,6 +75,8 @@ fun runMenu() {
             2  -> listNotes()
             3  -> updateNote()
             4  -> deleteNote()
+            5 -> println(noteAPI.listActiveNotes())
+            6 -> println(noteAPI.listArchivedNotes())
             0  -> exitApp()
             else -> println("Invalid option entered: $option")
         }
