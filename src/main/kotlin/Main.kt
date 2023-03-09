@@ -28,18 +28,16 @@ fun mainMenu() : Int {
          > ----------------------------------
          > | NOTE MENU                      |
          > |   1) Add a note                |
-         > |   2) List all notes            |
+         > |   2) List notes                |
          > |   3) Update a note             |
          > |   4) Delete a note             |
          > ----------------------------------
          > |   5) Archive a note            |
-         > |   6) List active notes         |
-         > |   7) List archived notes       |
          > ----------------------------------
-         > |   8) List notes with priority  |
+         > |   6) List notes with priority  |
          > ----------------------------------
-         > |   9) Save notes to file        |
-         > |   10) Load notes from file      |
+         > |   7) Save notes to file        |
+         > |   8) Load notes from file      |
          > ----------------------------------
          > |   0) Exit                      |
          > ----------------------------------
@@ -80,9 +78,31 @@ fun archiveNote() {
     }
 }
 
+//1 -> println(noteAPI.listAllNotes())
+//2 -> println(noteAPI.listActiveNotes())
+//3 -> println(noteAPI.listArchivedNotes())
 fun listNotes(){
     //logger.info { "listNotes() function invoked" }
-    println(noteAPI.listAllNotes())
+    val menu = """ 
+         > ----------------------------------
+         > |        NOTE KEEPER APP         |
+         > ----------------------------------
+         > | LIST NOTES MENU                |
+         > |   1) List all notes            |
+         > |   2) List active notes         |
+         > |   3) List archived notes       |
+         > ----------------------------------
+         > |   0) Exit                      |
+         > ----------------------------------
+         > ==>> """.trimMargin(">")
+
+    when (scanner.readNextInt(menu)) {
+        1 -> println(noteAPI.listAllNotes())
+        2 -> println(noteAPI.listActiveNotes())
+        3 -> println(noteAPI.listArchivedNotes())
+        0 -> {} // https://stackoverflow.com/questions/60755131/how-to-handle-empty-in-kotlins-when
+        else -> println("Invalid choice")
+    }
 }
 
 fun listNotesByPriority(){
@@ -162,11 +182,9 @@ fun runMenu() {
             3  -> updateNote()
             4  -> deleteNote()
             5 -> archiveNote()
-            6 -> println(noteAPI.listActiveNotes())
-            7 -> println(noteAPI.listArchivedNotes())
-            8 -> listNotesByPriority()
-            9 -> save()
-            10 -> load()
+            6 -> listNotesByPriority()
+            7 -> save()
+            8 -> load()
             0  -> exitApp()
             else -> println("Invalid option entered: $option")
         }
