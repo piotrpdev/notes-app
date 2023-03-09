@@ -1,9 +1,12 @@
 import controllers.NoteAPI
 import models.Note
 import mu.KotlinLogging
+import persistence.JSONSerializer
+import persistence.XMLSerializer
 import utils.ScannerInput
 import utils.ScannerInput.readNextInt
 import utils.ScannerInput.readNextLine
+import java.io.File
 import java.lang.System.exit
 import java.util.*
 import kotlin.system.exitProcess
@@ -12,7 +15,10 @@ private val logger = KotlinLogging.logger {}
 
 val scanner = ScannerInput
 
-private val noteAPI = NoteAPI()
+//private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
+private val noteAPI = NoteAPI(JSONSerializer(File("notes.json")))
+
+
 
 
 fun mainMenu() : Int {
@@ -30,6 +36,9 @@ fun mainMenu() : Int {
          > |   6) List archived notes       |
          > ----------------------------------
          > |   7) List notes with priority  |
+         > ----------------------------------
+         > |   8) Save notes to file        |
+         > |   9) Load notes from file      |
          > ----------------------------------
          > |   0) Exit                      |
          > ----------------------------------
@@ -103,6 +112,23 @@ fun deleteNote(){
     }
 }
 
+fun save() {
+    try {
+        noteAPI.store()
+    } catch (e: Exception) {
+        System.err.println("Error writing to file: $e")
+    }
+}
+
+fun load() {
+    try {
+        noteAPI.load()
+    } catch (e: Exception) {
+        System.err.println("Error reading from file: $e")
+    }
+}
+
+
 
 fun exitApp(){
     logger.debug {"Exiting...bye"}
@@ -119,6 +145,8 @@ fun runMenu() {
             5 -> println(noteAPI.listActiveNotes())
             6 -> println(noteAPI.listArchivedNotes())
             7 -> listNotesByPriority()
+            8 -> save()
+            9 -> load()
             0  -> exitApp()
             else -> println("Invalid option entered: $option")
         }
