@@ -1,9 +1,1 @@
----
-- noteTitle: "YAMLTest"
-  notePriority: 5
-  noteCategory: "Tests"
-  isNoteArchived: false
-- noteTitle: "YAMLTest2"
-  notePriority: 4
-  noteCategory: "Tests"
-  isNoteArchived: false
+--- []
