@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import persistence.JSONSerializer
 import persistence.XMLSerializer
+import persistence.YAMLSerializer
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -276,6 +277,44 @@ class NoteAPITest {
             loadedNotes.load()
 
             //Comparing the source of the notes (storingNotes) with the json loaded notes (loadedNotes)
+            assertEquals(3, storingNotes.numberOfNotes())
+            assertEquals(3, loadedNotes.numberOfNotes())
+            assertEquals(storingNotes.numberOfNotes(), loadedNotes.numberOfNotes())
+            assertEquals(storingNotes.findNote(0), loadedNotes.findNote(0))
+            assertEquals(storingNotes.findNote(1), loadedNotes.findNote(1))
+            assertEquals(storingNotes.findNote(2), loadedNotes.findNote(2))
+        }
+
+        @Test
+        fun `saving and loading an empty collection in YAML doesn't crash app`() {
+            // Saving an empty notes.yaml file.
+            val storingNotes = NoteAPI(YAMLSerializer(File("notes.yaml")))
+            storingNotes.store()
+
+            //Loading the empty notes.yaml file into a new object
+            val loadedNotes = NoteAPI(YAMLSerializer(File("notes.yaml")))
+            loadedNotes.load()
+
+            //Comparing the source of the notes (storingNotes) with the yaml loaded notes (loadedNotes)
+            assertEquals(0, storingNotes.numberOfNotes())
+            assertEquals(0, loadedNotes.numberOfNotes())
+            assertEquals(storingNotes.numberOfNotes(), loadedNotes.numberOfNotes())
+        }
+
+        @Test
+        fun `saving and loading an loaded collection in YAML doesn't loose data`() {
+            // Storing 3 notes to the notes.yaml file.
+            val storingNotes = NoteAPI(YAMLSerializer(File("notes.yaml")))
+            storingNotes.add(testApp!!)
+            storingNotes.add(swim!!)
+            storingNotes.add(summerHoliday!!)
+            storingNotes.store()
+
+            //Loading notes.yaml into a different collection
+            val loadedNotes = NoteAPI(YAMLSerializer(File("notes.yaml")))
+            loadedNotes.load()
+
+            //Comparing the source of the notes (storingNotes) with the yaml loaded notes (loadedNotes)
             assertEquals(3, storingNotes.numberOfNotes())
             assertEquals(3, loadedNotes.numberOfNotes())
             assertEquals(storingNotes.numberOfNotes(), loadedNotes.numberOfNotes())
