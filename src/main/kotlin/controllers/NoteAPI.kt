@@ -35,6 +35,19 @@ class NoteAPI(serializerType: Serializer){
         return false
     }
 
+    fun archiveNote(indexToUpdate: Int): Boolean {
+        //find the note object by the index number
+        val foundNote = findNote(indexToUpdate)
+
+        //if the note exists, use the note details passed as parameters to update the found note in the ArrayList.
+        if (foundNote != null) {
+            foundNote.isNoteArchived = true
+            return true
+        }
+
+        //if the note was not found, return false, indicating that the update was not successful
+        return false
+    }
 
     fun listAllNotes(): String {
         return if (notes.isEmpty()) {
