@@ -285,4 +285,31 @@ class NoteAPITest {
         }
     }
 
+    @Nested
+    inner class ArchiveTests {
+
+            @Test
+            fun `archiving a note that does not exist returns false`() {
+                assertFalse(emptyNotes!!.archiveNote(0))
+                assertFalse(populatedNotes!!.archiveNote(-1))
+                assertFalse(populatedNotes!!.archiveNote(5))
+            }
+
+            @Test
+            fun `archiving a note that exists returns true and archives`() {
+                //check note 5 exists and check the contents
+                assertEquals(swim, populatedNotes!!.findNote(4))
+                assertEquals("Swim - Pool", populatedNotes!!.findNote(4)!!.noteTitle)
+                assertEquals(3, populatedNotes!!.findNote(4)!!.notePriority)
+                assertEquals("Hobby", populatedNotes!!.findNote(4)!!.noteCategory)
+                assertFalse(populatedNotes!!.findNote(4)!!.isNoteArchived)
+
+                //archive note 5 and ensure contents updated successfully
+                assertTrue(populatedNotes!!.archiveNote(4))
+                assertEquals("Swim - Pool", populatedNotes!!.findNote(4)!!.noteTitle)
+                assertEquals(3, populatedNotes!!.findNote(4)!!.notePriority)
+                assertEquals("Hobby", populatedNotes!!.findNote(4)!!.noteCategory)
+                assertTrue(populatedNotes!!.findNote(4)!!.isNoteArchived)
+            }
+    }
 }
