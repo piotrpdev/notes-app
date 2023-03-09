@@ -6,19 +6,21 @@ Project for SETU Software Development Tools module. Made using Kotlin.
 
 ## Features
 
-- [ ] CRUD
-    - [ ] (C) Add notes
-    - [ ] (R) View notes
-        - [ ] List notes
-    - [ ] (U) Edit notes
-    - [ ] (D) Remove notes
+- [x] CRUD
+    - [x] (C) Add notes
+    - [x] (R) View notes
+        - [x] List notes
+    - [x] (U) Update notes
+    - [x] (D) Remove notes
 - [ ] Advanced features
     - [ ] Search notes
     - [ ] Sort notes
     - [ ] Filter notes
-    - [ ] Save notes to file
-    - [ ] Load notes from file
+    - [x] *Save notes to file
+    - [x] *Load notes from file
 - [ ] Nice table-based UI courtesy of [Picnic](https://github.com/JakeWharton/picnic)
+
+&ast; _Implemented in XML, JSON, and YAML_
 
 ## Run Locally
 
