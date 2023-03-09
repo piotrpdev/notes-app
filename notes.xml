@@ -1,15 +1,21 @@
 <object-stream>
   <list>
     <models.Note>
-      <noteTitle>TestNote</noteTitle>
-      <notePriority>5</notePriority>
-      <noteCategory>Tests</noteCategory>
+      <noteTitle>Test App</noteTitle>
+      <notePriority>4</notePriority>
+      <noteCategory>Work</noteCategory>
       <isNoteArchived>false</isNoteArchived>
     </models.Note>
     <models.Note>
-      <noteTitle>TestNote2</noteTitle>
-      <notePriority>4</notePriority>
-      <noteCategory>Tests</noteCategory>
+      <noteTitle>Swim - Pool</noteTitle>
+      <notePriority>3</notePriority>
+      <noteCategory>Hobby</noteCategory>
+      <isNoteArchived>false</isNoteArchived>
+    </models.Note>
+    <models.Note>
+      <noteTitle>Summer Holiday to France</noteTitle>
+      <notePriority>1</notePriority>
+      <noteCategory>Holiday</noteCategory>
       <isNoteArchived>false</isNoteArchived>
     </models.Note>
   </list>
