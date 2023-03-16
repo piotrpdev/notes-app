@@ -82,9 +82,6 @@ fun archiveNote() {
     }
 }
 
-//1 -> println(noteAPI.listAllNotes())
-//2 -> println(noteAPI.listActiveNotes())
-//3 -> println(noteAPI.listArchivedNotes())
 fun listNotes(){
     //logger.info { "listNotes() function invoked" }
     val menu = """ 
@@ -212,5 +209,16 @@ fun runMenu() {
 }
 
 fun main(args: Array<String>) {
+    // https://patorjk.com/software/taag/
+    println("""
+        .__   __.   ______   .___________. _______     _______.        ___      .______   .______   
+        |  \ |  |  /  __  \  |           ||   ____|   /       |       /   \     |   _  \  |   _  \  
+        |   \|  | |  |  |  | `---|  |----`|  |__     |   (----`      /  ^  \    |  |_)  | |  |_)  | 
+        |  . `  | |  |  |  |     |  |     |   __|     \   \         /  /_\  \   |   ___/  |   ___/  
+        |  |\   | |  `--'  |     |  |     |  |____.----)   |       /  _____  \  |  |      |  |      
+        |__| \__|  \______/      |__|     |_______|_______/       /__/     \__\ | _|      | _|      
+
+    """.trimIndent())
+
     runMenu()
 }
