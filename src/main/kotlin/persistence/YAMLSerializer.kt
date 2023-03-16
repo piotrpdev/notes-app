@@ -8,13 +8,14 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.SingletonSupport
 import models.Note
+import utils.SerializerUtils.isArrayList
 import java.io.File
 
 // https://www.mkammerer.de/blog/kotlin-and-yaml-part-2/
 class YAMLSerializer(private val file: File) : Serializer {
 
     @Throws(Exception::class)
-    override fun read(): Any {
+    override fun read(): ArrayList<Note>? {
         val mapper: ObjectMapper = YAMLMapper()
         mapper.registerModule(
             KotlinModule.Builder()
@@ -27,12 +28,14 @@ class YAMLSerializer(private val file: File) : Serializer {
                 .build()
         )
 
-        return mapper.readValue(file, object: TypeReference<ArrayList<Note?>?>(){})!!
+        val obj = mapper.readValue(file, object: TypeReference<ArrayList<Note?>?>(){})!!
+
+        return isArrayList(obj)
     }
 
 
     @Throws(Exception::class)
-    override fun write(obj: Any?) {
+    override fun write(obj: ArrayList<Note>) {
         val mapper: ObjectMapper = YAMLMapper()
         mapper.registerModule(
             KotlinModule.Builder()

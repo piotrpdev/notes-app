@@ -3,26 +3,29 @@ package persistence
 import com.thoughtworks.xstream.XStream
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver
 import models.Note
+import utils.SerializerUtils.isArrayList
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
 class JSONSerializer(private val file: File) : Serializer {
     @Throws(Exception::class)
-    override fun read(): Any {
+    override fun read(): ArrayList<Note>? {
         val xStream = XStream(JettisonMappedXmlDriver())
         xStream.allowTypes(arrayOf(Note::class.java))
-        val inputStream = xStream.createObjectInputStream(FileReader(file))
-        val obj = inputStream.readObject() as Any
-        inputStream.close()
-        return obj
+        val obj = xStream.createObjectInputStream(FileReader(file)).use {
+            it.readObject() as Any
+        }
+
+        return isArrayList(obj)
     }
 
     @Throws(Exception::class)
-    override fun write(obj: Any?) {
+    override fun write(obj: ArrayList<Note>) {
         val xStream = XStream(JettisonMappedXmlDriver())
-        val outputStream = xStream.createObjectOutputStream(FileWriter(file))
-        outputStream.writeObject(obj)
-        outputStream.close()
+
+        xStream.createObjectOutputStream(FileWriter(file)).use {
+            it.writeObject(obj)
+        }
     }
 }

@@ -76,3 +76,6 @@ outTmp/
 /kotlin-native/dist
 kotlin-ide/
 /htmlReport/
+notes.test.json
+notes.test.yaml
+notes.test.xml
