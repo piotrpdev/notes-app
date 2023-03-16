@@ -1,3 +1,7 @@
+import com.jakewharton.picnic.TextAlignment
+import com.jakewharton.picnic.TextBorder
+import com.jakewharton.picnic.renderText
+import com.jakewharton.picnic.table
 import controllers.NoteAPI
 import models.Note
 import mu.KotlinLogging
@@ -7,6 +11,7 @@ import persistence.YAMLSerializer
 import utils.ScannerInput
 import utils.ScannerInput.readNextInt
 import utils.ScannerInput.readNextLine
+import utils.UITables
 import java.io.File
 import java.lang.System.exit
 import java.util.*
@@ -24,29 +29,9 @@ private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
 
 
 fun mainMenu() : Int {
-    val menu = """ 
-         > ----------------------------------
-         > |        NOTE KEEPER APP         |
-         > ----------------------------------
-         > | NOTE MENU                      |
-         > |   1) Add a note                |
-         > |   2) List notes                |
-         > |   3) Update a note             |
-         > |   4) Delete a note             |
-         > ----------------------------------
-         > |   5) Search notes by title     |
-         > ----------------------------------
-         > |   6) Archive a note            |
-         > ----------------------------------
-         > |   7) List notes with priority  |
-         > ----------------------------------
-         > |   8) Save notes to file        |
-         > |   9) Load notes from file      |
-         > ----------------------------------
-         > |   0) Exit                      |
-         > ----------------------------------
-         > ==>> """.trimMargin(">")
-    return scanner.readNextInt(menu)
+    println(UITables.mainMenu)
+
+    return scanner.readNextInt("Enter option: ")
 }
 
 fun addNote(){
@@ -82,28 +67,16 @@ fun archiveNote() {
     }
 }
 
-//1 -> println(noteAPI.listAllNotes())
-//2 -> println(noteAPI.listActiveNotes())
-//3 -> println(noteAPI.listArchivedNotes())
 fun listNotes(){
     //logger.info { "listNotes() function invoked" }
-    val menu = """ 
-         > ----------------------------------
-         > |        NOTE KEEPER APP         |
-         > ----------------------------------
-         > | LIST NOTES MENU                |
-         > |   1) List all notes            |
-         > |   2) List active notes         |
-         > |   3) List archived notes       |
-         > ----------------------------------
-         > |   0) Exit                      |
-         > ----------------------------------
-         > ==>> """.trimMargin(">")
 
-    when (scanner.readNextInt(menu)) {
+    println(UITables.listNotesMenu)
+
+    when (scanner.readNextInt("Enter option: ")) {
         1 -> println(noteAPI.listAllNotes())
         2 -> println(noteAPI.listActiveNotes())
         3 -> println(noteAPI.listArchivedNotes())
+        4 -> listNotesByPriority()
         0 -> {} // https://stackoverflow.com/questions/60755131/how-to-handle-empty-in-kotlins-when
         else -> println("Invalid choice")
     }
@@ -197,20 +170,40 @@ fun runMenu() {
     do {
         when (val option = mainMenu()) {
             1  -> addNote()
-            2  -> listNotes()
+            2  -> viewNote()
             3  -> updateNote()
             4  -> deleteNote()
-            5 -> searchNotes()
-            6 -> archiveNote()
-            7 -> listNotesByPriority()
-            8 -> save()
+            5 -> archiveNote()
+            6 -> searchNotes()
+            7 -> deleteMultipleNotes()
+            8 -> listNotes()
             9 -> load()
+            10 -> save()
             0  -> exitApp()
             else -> println("Invalid option entered: $option")
         }
     } while (true)
 }
 
+fun deleteMultipleNotes() {
+    TODO("Not yet implemented")
+}
+
+fun viewNote() {
+    TODO("Not yet implemented")
+}
+
 fun main(args: Array<String>) {
+    // https://patorjk.com/software/taag/
+    println("""
+        .__   __.   ______   .___________. _______     _______.        ___      .______   .______   
+        |  \ |  |  /  __  \  |           ||   ____|   /       |       /   \     |   _  \  |   _  \  
+        |   \|  | |  |  |  | `---|  |----`|  |__     |   (----`      /  ^  \    |  |_)  | |  |_)  | 
+        |  . `  | |  |  |  |     |  |     |   __|     \   \         /  /_\  \   |   ___/  |   ___/  
+        |  |\   | |  `--'  |     |  |     |  |____.----)   |       /  _____  \  |  |      |  |      
+        |__| \__|  \______/      |__|     |_______|_______/       /__/     \__\ | _|      | _|      
+
+    """.trimIndent())
+
     runMenu()
 }
