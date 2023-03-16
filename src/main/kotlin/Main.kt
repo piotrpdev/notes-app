@@ -16,9 +16,9 @@ private val logger = KotlinLogging.logger {}
 
 val scanner = ScannerInput
 
-//private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
+private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
 //private val noteAPI = NoteAPI(JSONSerializer(File("notes.json")))
-private val noteAPI = NoteAPI(YAMLSerializer(File("notes.yaml")))
+//private val noteAPI = NoteAPI(YAMLSerializer(File("notes.yaml")))
 
 
 

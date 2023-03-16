@@ -351,4 +351,37 @@ class NoteAPITest {
                 assertTrue(populatedNotes!!.findNote(4)!!.isNoteArchived)
             }
     }
+
+    @Nested
+    inner class CountingMethods {
+
+        @Test
+        fun numberOfNotesCalculatedCorrectly() {
+            assertEquals(5, populatedNotes!!.numberOfNotes())
+            assertEquals(0, emptyNotes!!.numberOfNotes())
+        }
+
+        @Test
+        fun numberOfArchivedNotesCalculatedCorrectly() {
+            assertEquals(0, populatedNotes!!.numberOfArchivedNotes())
+            assertEquals(0, emptyNotes!!.numberOfArchivedNotes())
+        }
+
+        @Test
+        fun numberOfActiveNotesCalculatedCorrectly() {
+            assertEquals(5, populatedNotes!!.numberOfActiveNotes())
+            assertEquals(0, emptyNotes!!.numberOfActiveNotes())
+        }
+
+        @Test
+        fun numberOfNotesByPriorityCalculatedCorrectly() {
+            assertEquals(1, populatedNotes!!.numberOfNotesByPriority(1))
+            assertEquals(0, populatedNotes!!.numberOfNotesByPriority(2))
+            assertEquals(1, populatedNotes!!.numberOfNotesByPriority(3))
+            assertEquals(2, populatedNotes!!.numberOfNotesByPriority(4))
+            assertEquals(1, populatedNotes!!.numberOfNotesByPriority(5))
+            assertEquals(0, emptyNotes!!.numberOfNotesByPriority(1))
+        }
+    }
+
 }
