@@ -62,7 +62,7 @@ object UITables {
             }
             row {
                 cell("8")
-                cell("List All Notes")
+                cell("List Notes")
             }
             row {
                 cell("")

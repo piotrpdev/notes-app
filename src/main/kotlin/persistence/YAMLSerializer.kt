@@ -2,14 +2,14 @@ package persistence
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.SingletonSupport
 import models.Note
 import utils.SerializerUtils.isArrayList
 import java.io.File
+
 
 // https://www.mkammerer.de/blog/kotlin-and-yaml-part-2/
 class YAMLSerializer(private val file: File) : Serializer {
@@ -26,7 +26,7 @@ class YAMLSerializer(private val file: File) : Serializer {
                 .configure(KotlinFeature.SingletonSupport, false)
                 .configure(KotlinFeature.StrictNullChecks, false)
                 .build()
-        )
+        ).registerModule(JavaTimeModule())
 
         val obj = mapper.readValue(file, object: TypeReference<ArrayList<Note?>?>(){})!!
 
@@ -46,7 +46,7 @@ class YAMLSerializer(private val file: File) : Serializer {
                 .configure(KotlinFeature.SingletonSupport, false)
                 .configure(KotlinFeature.StrictNullChecks, false)
                 .build()
-        )
+        ).registerModule(JavaTimeModule())
 
         mapper.writeValue(file, obj)
     }
