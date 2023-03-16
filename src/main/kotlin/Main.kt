@@ -176,7 +176,11 @@ fun save() {
 
 fun load() {
     try {
-        noteAPI.load()
+        if (noteAPI.load()) {
+            println("Notes loaded successfully")
+        } else {
+            println("No notes to load")
+        }
     } catch (e: Exception) {
         System.err.println("Error reading from file: $e")
     }

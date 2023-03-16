@@ -1,1 +1,1 @@
-{"object-stream":{"list":[""]}}
+{"object-stream":{"list":[{"models.Note":[{"noteTitle":"JSONTestNote","notePriority":5,"noteCategory":"Tests","isNoteArchived":false},{"noteTitle":"JSONTestNote2","notePriority":4,"noteCategory":"Tests","isNoteArchived":false}]}]}}

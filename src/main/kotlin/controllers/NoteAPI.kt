@@ -76,14 +76,14 @@ class NoteAPI(serializerType: Serializer) {
 
 
     @Throws(Exception::class)
-    fun load() {
-        notes = serializer.read() as ArrayList<Note>
-    }
+    fun load(): Boolean =
+        serializer.read()?.also {
+            notes = it
+        } != null
+
 
     @Throws(Exception::class)
-    fun store() {
-        serializer.write(notes)
-    }
+    fun store() = serializer.write(notes)
 
 
 }
