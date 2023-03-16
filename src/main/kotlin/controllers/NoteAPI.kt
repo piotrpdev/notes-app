@@ -22,35 +22,15 @@ class NoteAPI(serializerType: Serializer) {
         if (isValidListIndex(indexToDelete, notes)) notes.removeAt(indexToDelete) else null
 
 
-    fun updateNote(indexToUpdate: Int, note: Note?): Boolean {
-        //find the note object by the index number
-        val foundNote = findNote(indexToUpdate)
+    fun updateNote(indexToUpdate: Int, note: Note): Boolean = findNote(indexToUpdate)?.apply {
+        noteTitle = note.noteTitle
+        notePriority = note.notePriority
+        noteCategory = note.noteCategory
+    } != null
 
-        //if the note exists, use the note details passed as parameters to update the found note in the ArrayList.
-        if ((foundNote != null) && (note != null)) {
-            foundNote.noteTitle = note.noteTitle
-            foundNote.notePriority = note.notePriority
-            foundNote.noteCategory = note.noteCategory
-            return true
-        }
-
-        //if the note was not found, return false, indicating that the update was not successful
-        return false
-    }
-
-    fun archiveNote(indexToUpdate: Int): Boolean {
-        //find the note object by the index number
-        val foundNote = findNote(indexToUpdate)
-
-        //if the note exists, use the note details passed as parameters to update the found note in the ArrayList.
-        if (foundNote != null) {
-            foundNote.isNoteArchived = true
-            return true
-        }
-
-        //if the note was not found, return false, indicating that the update was not successful
-        return false
-    }
+    fun archiveNote(indexToUpdate: Int): Boolean = findNote(indexToUpdate)?.apply {
+        isNoteArchived = true
+    } != null
 
     fun listAllNotes(): String = if (notes.isEmpty()) "No notes stored" else
         formatListString(notes)
