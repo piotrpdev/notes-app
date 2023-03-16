@@ -1,7 +1,3 @@
-import com.jakewharton.picnic.TextAlignment
-import com.jakewharton.picnic.TextBorder
-import com.jakewharton.picnic.renderText
-import com.jakewharton.picnic.table
 import controllers.NoteAPI
 import models.Note
 import mu.KotlinLogging
@@ -11,10 +7,9 @@ import persistence.YAMLSerializer
 import utils.ScannerInput
 import utils.ScannerInput.readNextInt
 import utils.ScannerInput.readNextLine
+import utils.SerializerUtils
 import utils.UITables
 import java.io.File
-import java.lang.System.exit
-import java.util.*
 import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger {}
@@ -25,17 +20,17 @@ private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
 //private val noteAPI = NoteAPI(JSONSerializer(File("notes.json")))
 //private val noteAPI = NoteAPI(YAMLSerializer(File("notes.yaml")))
 
-
-
-
 fun mainMenu() : Int {
+    logger.debug { "mainMenu() function invoked" }
+
     println(UITables.mainMenu)
 
     return scanner.readNextInt("Enter option: ")
 }
 
 fun addNote(){
-    //logger.info { "addNote() function invoked" }
+    logger.debug { "addNote() function invoked" }
+
     val noteTitle = readNextLine("Enter a title for the note: ")
     val notePriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
     val noteCategory = readNextLine("Enter a category for the note: ")
@@ -49,7 +44,8 @@ fun addNote(){
 }
 
 fun archiveNote() {
-    //logger.info { "archiveNote() function invoked" }
+    logger.debug { "archiveNote() function invoked" }
+
     listNotes()
     if (noteAPI.numberOfNotes() > 0) {
         //only ask the user to choose the note if notes exist
@@ -68,7 +64,7 @@ fun archiveNote() {
 }
 
 fun listNotes(){
-    //logger.info { "listNotes() function invoked" }
+    logger.debug { "listNotes() function invoked" }
 
     println(UITables.listNotesMenu)
 
@@ -83,14 +79,17 @@ fun listNotes(){
 }
 
 fun listNotesByPriority(){
-    //logger.info { "listNotesByPriority() function invoked" }
+    logger.debug { "listNotesByPriority() function invoked" }
+
     val notePriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
     println(noteAPI.listNotesBySelectedPriority(notePriority))
 }
 
 fun updateNote() {
-    //logger.info { "updateNotes() function invoked" }
+    logger.debug { "updateNote() function invoked" }
+
     listNotes()
+
     if (noteAPI.numberOfNotes() > 0) {
         //only ask the user to choose the note if notes exist
         val indexToUpdate = readNextInt("Enter the index of the note to update: ")
@@ -113,8 +112,10 @@ fun updateNote() {
 
 
 fun deleteNote(){
-    //logger.info { "deleteNotes() function invoked" }
+    logger.debug { "deleteNote() function invoked" }
+
     listNotes()
+
     if (noteAPI.numberOfNotes() > 0) {
         //only ask the user to choose the note to delete if notes exist
         val indexToDelete = readNextInt("Enter the index of the note to delete: ")
@@ -129,6 +130,8 @@ fun deleteNote(){
 }
 
 fun searchNotes() {
+    logger.debug { "searchNotes() function invoked" }
+
     val searchTitle = readNextLine("Enter the description to search by: ")
     val searchResults = noteAPI.searchByTitle(searchTitle)
     if (searchResults.isEmpty()) {
@@ -140,6 +143,8 @@ fun searchNotes() {
 
 
 fun save() {
+    logger.debug { "save() function invoked" }
+
     try {
         noteAPI.store()
     } catch (e: Exception) {
@@ -148,6 +153,8 @@ fun save() {
 }
 
 fun load() {
+    logger.debug { "load() function invoked" }
+
     try {
         if (noteAPI.load()) {
             println("Notes loaded successfully")
@@ -162,11 +169,15 @@ fun load() {
 
 
 fun exitApp(){
+    logger.debug { "exitApp() function invoked" }
+
     logger.debug {"Exiting...bye"}
     exitProcess(0)
 }
 
 fun runMenu() {
+    logger.debug { "runMenu() function invoked" }
+
     do {
         when (val option = mainMenu()) {
             1  -> addNote()
@@ -179,6 +190,8 @@ fun runMenu() {
             8 -> listNotes()
             9 -> load()
             10 -> save()
+            -98 -> SerializerUtils.generateSeededFiles()
+            -99 -> noteAPI.seedNotes()
             0  -> exitApp()
             else -> println("Invalid option entered: $option")
         }
@@ -186,14 +199,17 @@ fun runMenu() {
 }
 
 fun deleteMultipleNotes() {
+    logger.debug { "deleteMultipleNotes() function invoked" }
     TODO("Not yet implemented")
 }
 
 fun viewNote() {
+    logger.debug { "viewNote() function invoked" }
     TODO("Not yet implemented")
 }
 
 fun main(args: Array<String>) {
+    logger.debug { "main() function invoked" }
     // https://patorjk.com/software/taag/
     println("""
         .__   __.   ______   .___________. _______     _______.        ___      .______   .______   

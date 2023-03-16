@@ -2,6 +2,8 @@ package controllers
 
 import models.Note
 import persistence.Serializer
+import utils.SerializerUtils
+import java.time.LocalDateTime
 
 class NoteAPI(serializerType: Serializer) {
 
@@ -26,10 +28,12 @@ class NoteAPI(serializerType: Serializer) {
         noteTitle = note.noteTitle
         notePriority = note.notePriority
         noteCategory = note.noteCategory
+        updatedAt = LocalDateTime.now()
     } != null
 
     fun archiveNote(indexToUpdate: Int): Boolean = findNote(indexToUpdate)?.apply {
         isNoteArchived = true
+        updatedAt = LocalDateTime.now()
     } != null
 
     fun listAllNotes(): String = if (notes.isEmpty()) "No notes stored" else
@@ -74,6 +78,7 @@ class NoteAPI(serializerType: Serializer) {
         notes.filter { note -> note.noteTitle.contains(searchString, ignoreCase = true) }
             .joinToString(separator = "\n") { note -> notes.indexOf(note).toString() + ": " + note.toString() }
 
+    fun seedNotes() { notes = SerializerUtils.getSeededNotes() }
 
     @Throws(Exception::class)
     fun load(): Boolean =
