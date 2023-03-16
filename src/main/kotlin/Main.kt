@@ -16,9 +16,9 @@ private val logger = KotlinLogging.logger {}
 
 val scanner = ScannerInput
 
-//private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
+private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
 //private val noteAPI = NoteAPI(JSONSerializer(File("notes.json")))
-private val noteAPI = NoteAPI(YAMLSerializer(File("notes.yaml")))
+//private val noteAPI = NoteAPI(YAMLSerializer(File("notes.yaml")))
 
 
 
@@ -34,12 +34,14 @@ fun mainMenu() : Int {
          > |   3) Update a note             |
          > |   4) Delete a note             |
          > ----------------------------------
-         > |   5) Archive a note            |
+         > |   5) Search notes by title     |
          > ----------------------------------
-         > |   6) List notes with priority  |
+         > |   6) Archive a note            |
          > ----------------------------------
-         > |   7) Save notes to file        |
-         > |   8) Load notes from file      |
+         > |   7) List notes with priority  |
+         > ----------------------------------
+         > |   8) Save notes to file        |
+         > |   9) Load notes from file      |
          > ----------------------------------
          > |   0) Exit                      |
          > ----------------------------------
@@ -153,6 +155,17 @@ fun deleteNote(){
     }
 }
 
+fun searchNotes() {
+    val searchTitle = readNextLine("Enter the description to search by: ")
+    val searchResults = noteAPI.searchByTitle(searchTitle)
+    if (searchResults.isEmpty()) {
+        println("No notes found")
+    } else {
+        println(searchResults)
+    }
+}
+
+
 fun save() {
     try {
         noteAPI.store()
@@ -183,10 +196,11 @@ fun runMenu() {
             2  -> listNotes()
             3  -> updateNote()
             4  -> deleteNote()
-            5 -> archiveNote()
-            6 -> listNotesByPriority()
-            7 -> save()
-            8 -> load()
+            5 -> searchNotes()
+            6 -> archiveNote()
+            7 -> listNotesByPriority()
+            8 -> save()
+            9 -> load()
             0  -> exitApp()
             else -> println("Invalid option entered: $option")
         }

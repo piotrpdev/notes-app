@@ -351,4 +351,76 @@ class NoteAPITest {
                 assertTrue(populatedNotes!!.findNote(4)!!.isNoteArchived)
             }
     }
+
+    @Nested
+    inner class CountingMethods {
+
+        @Test
+        fun numberOfNotesCalculatedCorrectly() {
+            assertEquals(5, populatedNotes!!.numberOfNotes())
+            assertEquals(0, emptyNotes!!.numberOfNotes())
+        }
+
+        @Test
+        fun numberOfArchivedNotesCalculatedCorrectly() {
+            assertEquals(0, populatedNotes!!.numberOfArchivedNotes())
+            assertEquals(0, emptyNotes!!.numberOfArchivedNotes())
+        }
+
+        @Test
+        fun numberOfActiveNotesCalculatedCorrectly() {
+            assertEquals(5, populatedNotes!!.numberOfActiveNotes())
+            assertEquals(0, emptyNotes!!.numberOfActiveNotes())
+        }
+
+        @Test
+        fun numberOfNotesByPriorityCalculatedCorrectly() {
+            assertEquals(1, populatedNotes!!.numberOfNotesByPriority(1))
+            assertEquals(0, populatedNotes!!.numberOfNotesByPriority(2))
+            assertEquals(1, populatedNotes!!.numberOfNotesByPriority(3))
+            assertEquals(2, populatedNotes!!.numberOfNotesByPriority(4))
+            assertEquals(1, populatedNotes!!.numberOfNotesByPriority(5))
+            assertEquals(0, emptyNotes!!.numberOfNotesByPriority(1))
+        }
+    }
+
+    @Nested
+    inner class SearchMethods {
+
+        @Test
+        fun `search notes by title returns no notes when no notes with that title exist`() {
+            //Searching a populated collection for a title that doesn't exist.
+            assertEquals(5, populatedNotes!!.numberOfNotes())
+            val searchResults = populatedNotes!!.searchByTitle("no results expected")
+            assertTrue(searchResults.isEmpty())
+
+            //Searching an empty collection
+            assertEquals(0, emptyNotes!!.numberOfNotes())
+            assertTrue(emptyNotes!!.searchByTitle("").isEmpty())
+        }
+
+        @Test
+        fun `search notes by title returns notes when notes with that title exist`() {
+            assertEquals(5, populatedNotes!!.numberOfNotes())
+
+            //Searching a populated collection for a full title that exists (case matches exactly)
+            var searchResults = populatedNotes!!.searchByTitle("Code App")
+            assertTrue(searchResults.contains("Code App"))
+            assertFalse(searchResults.contains("Test App"))
+
+            //Searching a populated collection for a partial title that exists (case matches exactly)
+            searchResults = populatedNotes!!.searchByTitle("App")
+            assertTrue(searchResults.contains("Code App"))
+            assertTrue(searchResults.contains("Test App"))
+            assertFalse(searchResults.contains("Swim - Pool"))
+
+            //Searching a populated collection for a partial title that exists (case doesn't match)
+            searchResults = populatedNotes!!.searchByTitle("aPp")
+            assertTrue(searchResults.contains("Code App"))
+            assertTrue(searchResults.contains("Test App"))
+            assertFalse(searchResults.contains("Swim - Pool"))
+        }
+    }
+
+
 }
