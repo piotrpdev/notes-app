@@ -1,8 +1,10 @@
 package controllers
 
+import com.jakewharton.picnic.Table
 import models.Note
 import persistence.Serializer
 import utils.SerializerUtils
+import utils.UITables
 import java.time.LocalDateTime
 
 class NoteAPI(serializerType: Serializer) {
@@ -35,6 +37,8 @@ class NoteAPI(serializerType: Serializer) {
         isNoteArchived = true
         updatedAt = LocalDateTime.now()
     } != null
+
+    fun findAll(): MutableList<Note> = notes.toMutableList()
 
     fun listAllNotes(): String = if (notes.isEmpty()) "No notes stored" else
         formatListString(notes)
@@ -69,6 +73,10 @@ class NoteAPI(serializerType: Serializer) {
         notes[index]
     else null
 
+    fun findUsingNote(note: Note): Note? = notes.find { it == note }
+
+    fun findIndexUsingNote(note: Note): Int? = notes.indexOf(note)
+
     //utility method to determine if an index is valid in a list.
     private fun isValidListIndex(index: Int, list: List<Any>): Boolean = (index >= 0 && index < list.size)
 
@@ -77,6 +85,22 @@ class NoteAPI(serializerType: Serializer) {
     fun searchByTitle(searchString: String) =
         notes.filter { note -> note.noteTitle.contains(searchString, ignoreCase = true) }
             .joinToString(separator = "\n") { note -> notes.indexOf(note).toString() + ": " + note.toString() }
+
+    private fun noteInfoTemplate(title: String, data: List<Note>, allNotes: Boolean = false): Table {
+        return UITables.noteInfoTemplate(title, data, allNotes)
+    }
+
+    fun generateNoteTable(note: Note): Table {
+        return noteInfoTemplate("Note Information", listOf(note))
+    }
+
+    fun generateMultipleNotesTable(notes: List<Note>): Table {
+        return noteInfoTemplate("Multiple Note Information", notes)
+    }
+
+    fun generateAllNotesTable(): Table {
+        return noteInfoTemplate("All Note Information", notes, true)
+    }
 
     fun seedNotes() { notes = SerializerUtils.getSeededNotes() }
 

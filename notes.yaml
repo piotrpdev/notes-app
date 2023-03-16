@@ -111,115 +111,67 @@
   - 11
   - 13
   - 45
-- noteTitle: "Grocery list"
-  notePriority: 3
-  noteCategory: "Shopping"
-  isNoteArchived: false
-  updatedAt:
-  - 2023
-  - 3
-  - 10
-  - 10
-  - 0
-  createdAt:
-  - 2023
-  - 3
-  - 10
-  - 10
-  - 0
-- noteTitle: "Meeting agenda"
+- noteTitle: "Project milestones"
   notePriority: 1
   noteCategory: "Work"
   isNoteArchived: false
   updatedAt:
   - 2023
   - 3
-  - 12
   - 15
-  - 30
+  - 16
+  - 0
   createdAt:
   - 2023
   - 3
-  - 11
-  - 13
-  - 0
-- noteTitle: "Birthday party ideas"
+  - 15
+  - 14
+  - 30
+- noteTitle: "Weekend trip packing list"
   notePriority: 2
+  noteCategory: "Travel"
+  isNoteArchived: false
+  updatedAt:
+  - 2023
+  - 3
+  - 12
+  - 17
+  - 15
+  createdAt:
+  - 2023
+  - 3
+  - 12
+  - 16
+  - 45
+- noteTitle: "Car maintenance schedule"
+  notePriority: 4
   noteCategory: "Personal"
   isNoteArchived: false
   updatedAt:
   - 2023
   - 3
   - 14
-  - 18
-  - 45
+  - 10
+  - 30
   createdAt:
   - 2023
   - 3
   - 14
-  - 17
-  - 30
-- noteTitle: "Workout plan"
-  notePriority: 4
-  noteCategory: "Health"
-  isNoteArchived: false
-  updatedAt:
-  - 2023
-  - 3
-  - 9
-  - 11
-  - 30
-  createdAt:
-  - 2023
-  - 3
-  - 9
-  - 11
+  - 10
   - 0
-- noteTitle: "Books to read"
+- noteTitle: "Movies to watch"
   notePriority: 5
   noteCategory: "Entertainment"
   isNoteArchived: true
   updatedAt:
   - 2023
   - 3
-  - 8
-  - 12
-  - 15
-  createdAt:
-  - 2023
-  - 3
-  - 8
-  - 12
-  - 0
-- noteTitle: "Travel itinerary"
-  notePriority: 1
-  noteCategory: "Travel"
-  isNoteArchived: false
-  updatedAt:
-  - 2023
-  - 3
   - 10
-  - 20
+  - 22
   - 0
   createdAt:
   - 2023
   - 3
   - 10
-  - 19
+  - 21
   - 30
-- noteTitle: "Recipes to try"
-  notePriority: 3
-  noteCategory: "Cooking"
-  isNoteArchived: true
-  updatedAt:
-  - 2023
-  - 3
-  - 11
-  - 14
-  - 0
-  createdAt:
-  - 2023
-  - 3
-  - 11
-  - 13
-  - 45

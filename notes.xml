@@ -57,60 +57,36 @@
       <createdAt>2023-03-11T13:45:00</createdAt>
     </models.Note>
     <models.Note>
-      <noteTitle>Grocery list</noteTitle>
-      <notePriority>3</notePriority>
-      <noteCategory>Shopping</noteCategory>
-      <isNoteArchived>false</isNoteArchived>
-      <updatedAt>2023-03-10T10:00:00</updatedAt>
-      <createdAt>2023-03-10T10:00:00</createdAt>
-    </models.Note>
-    <models.Note>
-      <noteTitle>Meeting agenda</noteTitle>
+      <noteTitle>Project milestones</noteTitle>
       <notePriority>1</notePriority>
       <noteCategory>Work</noteCategory>
       <isNoteArchived>false</isNoteArchived>
-      <updatedAt>2023-03-12T15:30:00</updatedAt>
-      <createdAt>2023-03-11T13:00:00</createdAt>
+      <updatedAt>2023-03-15T16:00:00</updatedAt>
+      <createdAt>2023-03-15T14:30:00</createdAt>
     </models.Note>
     <models.Note>
-      <noteTitle>Birthday party ideas</noteTitle>
+      <noteTitle>Weekend trip packing list</noteTitle>
       <notePriority>2</notePriority>
+      <noteCategory>Travel</noteCategory>
+      <isNoteArchived>false</isNoteArchived>
+      <updatedAt>2023-03-12T17:15:00</updatedAt>
+      <createdAt>2023-03-12T16:45:00</createdAt>
+    </models.Note>
+    <models.Note>
+      <noteTitle>Car maintenance schedule</noteTitle>
+      <notePriority>4</notePriority>
       <noteCategory>Personal</noteCategory>
       <isNoteArchived>false</isNoteArchived>
-      <updatedAt>2023-03-14T18:45:00</updatedAt>
-      <createdAt>2023-03-14T17:30:00</createdAt>
+      <updatedAt>2023-03-14T10:30:00</updatedAt>
+      <createdAt>2023-03-14T10:00:00</createdAt>
     </models.Note>
     <models.Note>
-      <noteTitle>Workout plan</noteTitle>
-      <notePriority>4</notePriority>
-      <noteCategory>Health</noteCategory>
-      <isNoteArchived>false</isNoteArchived>
-      <updatedAt>2023-03-09T11:30:00</updatedAt>
-      <createdAt>2023-03-09T11:00:00</createdAt>
-    </models.Note>
-    <models.Note>
-      <noteTitle>Books to read</noteTitle>
+      <noteTitle>Movies to watch</noteTitle>
       <notePriority>5</notePriority>
       <noteCategory>Entertainment</noteCategory>
       <isNoteArchived>true</isNoteArchived>
-      <updatedAt>2023-03-08T12:15:00</updatedAt>
-      <createdAt>2023-03-08T12:00:00</createdAt>
-    </models.Note>
-    <models.Note>
-      <noteTitle>Travel itinerary</noteTitle>
-      <notePriority>1</notePriority>
-      <noteCategory>Travel</noteCategory>
-      <isNoteArchived>false</isNoteArchived>
-      <updatedAt>2023-03-10T20:00:00</updatedAt>
-      <createdAt>2023-03-10T19:30:00</createdAt>
-    </models.Note>
-    <models.Note>
-      <noteTitle>Recipes to try</noteTitle>
-      <notePriority>3</notePriority>
-      <noteCategory>Cooking</noteCategory>
-      <isNoteArchived>true</isNoteArchived>
-      <updatedAt>2023-03-11T14:00:00</updatedAt>
-      <createdAt>2023-03-11T13:45:00</createdAt>
+      <updatedAt>2023-03-10T22:00:00</updatedAt>
+      <createdAt>2023-03-10T21:30:00</createdAt>
     </models.Note>
   </list>
 </object-stream>
