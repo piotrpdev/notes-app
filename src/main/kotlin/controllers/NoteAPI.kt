@@ -1,6 +1,8 @@
 package controllers
 
 import com.jakewharton.picnic.Table
+import com.jakewharton.picnic.TextBorder
+import com.jakewharton.picnic.renderText
 import models.Note
 import persistence.Serializer
 import utils.SerializerUtils
@@ -13,23 +15,18 @@ class NoteAPI(serializerType: Serializer) {
 
     private var notes = ArrayList<Note>()
 
-    private fun formatListString(notesToFormat: List<Note>): String =
-        notesToFormat
-            .joinToString(separator = "\n") { note ->
-                notes.indexOf(note).toString() + ": " + note.toString()
-            }
-
-
     fun add(note: Note): Boolean = notes.add(note)
 
     fun deleteNote(indexToDelete: Int): Note? =
         if (isValidListIndex(indexToDelete, notes)) notes.removeAt(indexToDelete) else null
 
+    fun removeMultipleNotes(noteList: List<Note>) = notes.removeAll(noteList)
 
     fun updateNote(indexToUpdate: Int, note: Note): Boolean = findNote(indexToUpdate)?.apply {
         noteTitle = note.noteTitle
         notePriority = note.notePriority
         noteCategory = note.noteCategory
+        isNoteArchived = note.isNoteArchived
         updatedAt = LocalDateTime.now()
     } != null
 
@@ -41,29 +38,28 @@ class NoteAPI(serializerType: Serializer) {
     fun findAll(): MutableList<Note> = notes.toMutableList()
 
     fun listAllNotes(): String = if (notes.isEmpty()) "No notes stored" else
-        formatListString(notes)
+        generateAllNotesTable().renderText(border= TextBorder.ROUNDED)
 
 
     fun listActiveNotes(): String = if (notes.isEmpty() || numberOfActiveNotes() == 0) "No active notes stored"
     else
-        formatListString(notes.filter { note -> !note.isNoteArchived })
+        generateMultipleNotesTable(notes.filter { note -> !note.isNoteArchived }).renderText(border= TextBorder.ROUNDED)
 
 
     fun listArchivedNotes(): String = if (notes.isEmpty() || numberOfArchivedNotes() == 0) "No archived notes stored"
     else
-        formatListString(notes.filter { note -> note.isNoteArchived })
+        generateMultipleNotesTable(notes.filter { note -> note.isNoteArchived }).renderText(border= TextBorder.ROUNDED)
+
+    fun listNotesBySelectedPriority(priority: Int): String =
+        if (notes.isEmpty() || numberOfNotesByPriority(priority) == 0) "No notes with priority"
+        else
+            generateMultipleNotesTable(notes.filter { note -> note.notePriority == priority }).renderText(border= TextBorder.ROUNDED)
 
 
     //helper method to determine how many archived notes there are
     fun numberOfArchivedNotes(): Int = notes.count { it.isNoteArchived }
 
     fun numberOfActiveNotes(): Int = notes.count { !it.isNoteArchived }
-
-    fun listNotesBySelectedPriority(priority: Int): String =
-        if (notes.isEmpty() || numberOfNotesByPriority(priority) == 0) "No notes with priority"
-        else
-            formatListString(notes.filter { note -> note.notePriority == priority })
-
 
     fun numberOfNotesByPriority(priority: Int): Int = notes.count { it.notePriority == priority }
 
