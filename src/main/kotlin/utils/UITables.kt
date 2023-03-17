@@ -6,6 +6,8 @@ import com.jakewharton.picnic.renderText
 import com.jakewharton.picnic.table
 import models.Note
 
+// DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date)
+
 object UITables {
     val mainMenu = table {
         cellStyle {
@@ -55,7 +57,7 @@ object UITables {
             }
             row {
                 cell("7")
-                cell("Delete Multiple Notes")
+                cell("Remove Multiple Notes")
             }
             row {
                 cell("")
@@ -153,7 +155,7 @@ object UITables {
         header {
             row {
                 cell(title) {
-                    columnSpan = 4
+                    columnSpan = if (allNotes) 5 else 4
                     alignment = TextAlignment.MiddleCenter
                     border = true
                 }

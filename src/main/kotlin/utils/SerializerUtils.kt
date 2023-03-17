@@ -9,7 +9,7 @@ import java.io.File
 import java.time.LocalDateTime
 
 object SerializerUtils {
-    private fun ldp(s: String): LocalDateTime = LocalDateTime.parse(s)
+    fun ldp(s: String): LocalDateTime = LocalDateTime.parse(s)
     
     @JvmStatic
     fun isArrayList(obj: Any): ArrayList<Note>? = if (obj is ArrayList<*> && obj.all { it is Note }) {
