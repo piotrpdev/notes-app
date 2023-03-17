@@ -9,7 +9,7 @@ import java.io.File
 import java.time.LocalDateTime
 
 object SerializerUtils {
-    private fun ldp(s: String): LocalDateTime = LocalDateTime.parse(s)
+    fun ldp(s: String): LocalDateTime = LocalDateTime.parse(s)
     
     @JvmStatic
     fun isArrayList(obj: Any): ArrayList<Note>? = if (obj is ArrayList<*> && obj.all { it is Note }) {
@@ -30,13 +30,10 @@ object SerializerUtils {
         notes.add(Note("Books to read", 5, "Entertainment", true, ldp("2023-03-08T12:15"), ldp("2023-03-08T12:00")))
         notes.add(Note("Travel itinerary", 1, "Travel", false, ldp("2023-03-10T20:00"), ldp("2023-03-10T19:30")))
         notes.add(Note("Recipes to try", 3, "Cooking", true, ldp("2023-03-11T14:00"), ldp("2023-03-11T13:45")))
-        notes.add(Note("Grocery list", 3, "Shopping", false, ldp("2023-03-10T10:00"), ldp("2023-03-10T10:00")))
-        notes.add(Note("Meeting agenda", 1, "Work", false, ldp("2023-03-12T15:30"), ldp("2023-03-11T13:00")))
-        notes.add(Note("Birthday party ideas", 2, "Personal", false, ldp("2023-03-14T18:45"), ldp("2023-03-14T17:30")))
-        notes.add(Note("Workout plan", 4, "Health", false, ldp("2023-03-09T11:30"), ldp("2023-03-09T11:00")))
-        notes.add(Note("Books to read", 5, "Entertainment", true, ldp("2023-03-08T12:15"), ldp("2023-03-08T12:00")))
-        notes.add(Note("Travel itinerary", 1, "Travel", false, ldp("2023-03-10T20:00"), ldp("2023-03-10T19:30")))
-        notes.add(Note("Recipes to try", 3, "Cooking", true, ldp("2023-03-11T14:00"), ldp("2023-03-11T13:45")))
+        notes.add(Note("Project milestones", 1, "Work", false, LocalDateTime.parse("2023-03-15T16:00"), LocalDateTime.parse("2023-03-15T14:30")))
+        notes.add(Note("Weekend trip packing list", 2, "Travel", false, LocalDateTime.parse("2023-03-12T17:15"), LocalDateTime.parse("2023-03-12T16:45")))
+        notes.add(Note("Car maintenance schedule", 4, "Personal", false, LocalDateTime.parse("2023-03-14T10:30"), LocalDateTime.parse("2023-03-14T10:00")))
+        notes.add(Note("Movies to watch", 5, "Entertainment", true, LocalDateTime.parse("2023-03-10T22:00"), LocalDateTime.parse("2023-03-10T21:30")))
 
         return notes
     }

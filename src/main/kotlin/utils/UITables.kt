@@ -4,6 +4,9 @@ import com.jakewharton.picnic.TextAlignment
 import com.jakewharton.picnic.TextBorder
 import com.jakewharton.picnic.renderText
 import com.jakewharton.picnic.table
+import models.Note
+
+// DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date)
 
 object UITables {
     val mainMenu = table {
@@ -54,7 +57,7 @@ object UITables {
             }
             row {
                 cell("7")
-                cell("Delete Multiple Notes")
+                cell("Remove Multiple Notes")
             }
             row {
                 cell("")
@@ -139,4 +142,75 @@ object UITables {
             }
         }
     }.renderText(border= TextBorder.ROUNDED)
+
+    @JvmStatic
+    fun noteInfoTemplate(title: String, data: List<Note>, allNotes: Boolean) = table {
+        cellStyle {
+            alignment = TextAlignment.MiddleRight
+            paddingLeft = 1
+            paddingRight = 1
+            borderLeft = true
+            borderRight = true
+        }
+        header {
+            row {
+                cell(title) {
+                    columnSpan = if (allNotes) 5 else 4
+                    alignment = TextAlignment.MiddleCenter
+                    border = true
+                }
+            }
+            row {
+                cellStyle {
+                    border = true
+                    alignment = TextAlignment.BottomLeft
+                }
+                if (allNotes) {
+                    cell("Index") {
+                        alignment = TextAlignment.MiddleCenter
+                    }
+                }
+                cell("Title") {
+                    alignment = TextAlignment.MiddleCenter
+                }
+                cell("Priority") {
+                    alignment = TextAlignment.MiddleCenter
+                }
+                cell("Category") {
+                    alignment = TextAlignment.MiddleCenter
+                }
+                cell("Archived") {
+                    alignment = TextAlignment.MiddleCenter
+                }
+                cell("Updated At") {
+                    alignment = TextAlignment.MiddleCenter
+                }
+                cell("Created At") {
+                    alignment = TextAlignment.MiddleCenter
+                }
+            }
+        }
+        body {
+            data.forEachIndexed { index, it ->
+                row {
+                    if (allNotes) {
+                        cell(index.toString()) {
+                            alignment = TextAlignment.MiddleCenter
+                        }
+                    }
+                    cell(it.noteTitle) {}
+                    cell(it.notePriority.toString()) {}
+                    cell(it.noteCategory) {}
+                    cell(if (it.isNoteArchived) "Yes" else "No") {}
+                    cell(it.updatedAt.toString()) {}
+                    cell(it.createdAt.toString()) {}
+                    if (index == data.size - 1) {
+                        cellStyle {
+                            borderBottom = true
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
