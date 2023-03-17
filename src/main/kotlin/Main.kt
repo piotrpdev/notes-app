@@ -1,4 +1,3 @@
-
 import com.jakewharton.picnic.TextBorder
 import com.jakewharton.picnic.renderText
 import controllers.NoteAPI
@@ -7,7 +6,6 @@ import mu.KotlinLogging
 import persistence.XMLSerializer
 import utils.ScannerInput
 import utils.ScannerInput.readNextInt
-import utils.ScannerInput.readNextLine
 import utils.SerializerUtils
 import utils.UITables
 import java.io.File
@@ -21,6 +19,8 @@ val scanner = ScannerInput
 private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
 //private val noteAPI = NoteAPI(JSONSerializer(File("notes.json")))
 //private val noteAPI = NoteAPI(YAMLSerializer(File("notes.yaml")))
+
+fun printAllNotes() = println(noteAPI.generateAllNotesTable().renderText(border = TextBorder.ROUNDED))
 
 fun generateNote(old: Note? = null): Note {
     logger.debug { "Generating note" }
@@ -42,11 +42,11 @@ fun generateNote(old: Note? = null): Note {
 
     print("Enter note priority${def(old?.notePriority)}: ")
     var notePriority = readln().toIntOrNull()
-    while (notePriority == null || notePriority < 0) {
+    while (notePriority == null || notePriority < 1 || notePriority > 5) {
         notePriority = if (old != null)
             old.notePriority
         else {
-            println("Error: note priority must be a valid non-negative integer. Please enter a valid note priority.")
+            println("Error: note priority must be a valid non-negative integer between 1 and 5. Please enter a valid note priority.")
             readln().toIntOrNull()
         }
     }
@@ -79,15 +79,19 @@ fun generateNote(old: Note? = null): Note {
 internal fun getNoteByIndex(): Note? {
     logger.debug { "Trying to get note by index" }
 
-    val allNotes = noteAPI.findAll()
-    if (allNotes.isEmpty()) {
+    if (noteAPI.numberOfNotes() == 0) {
         println("No notes found.")
         return null
     }
 
-    print("Enter the index of the note you want to find: ")
+    printAllNotes()
+
+    val allNotes = noteAPI.findAll()
+
+    print("Enter the index of the note you want to use: ")
     val noteIndex = readln().toIntOrNull()
 
+    // TODO: Use isValidIndex
     if (noteIndex == null || noteIndex < 0 || noteIndex >= allNotes.size) {
         println("Error: Invalid index. Please enter a valid index.")
         return getNoteByIndex()
@@ -98,13 +102,20 @@ internal fun getNoteByIndex(): Note? {
     logger.debug { "Note found: $note" }
     logger.debug { "Displaying note" }
     println("\nThe following note was found:")
-    println(noteAPI.generateNoteTable(note).renderText(border= TextBorder.ROUNDED))
+    println(noteAPI.generateNoteTable(note).renderText(border = TextBorder.ROUNDED))
 
     return note
 }
 
 internal fun getMultipleNotesByIndex(): MutableList<Note>? {
     logger.debug { "Trying to get multiple notes by index" }
+
+    if (noteAPI.numberOfNotes() == 0) {
+        println("No notes found.")
+        return null
+    }
+
+    printAllNotes()
 
     print("Do you want to search for multiple notes using their index? (y/n): ")
     val searchMultiple = readln().toCharArray().getOrNull(0)
@@ -160,8 +171,9 @@ fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
             1 -> {
                 print("Enter the note title to filter by: ")
                 val noteTitle = readln()
-                noteList.removeIf { it.noteTitle != noteTitle }
+                noteList.removeIf { !it.noteTitle.lowercase().contains(noteTitle.lowercase()) }
             }
+
             2 -> {
                 print("Enter the note priority to filter by: ")
                 var notePriority = readln().toIntOrNull()
@@ -171,11 +183,13 @@ fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
                 }
                 noteList.removeIf { it.notePriority != notePriority }
             }
+
             3 -> {
                 print("Enter the note category to filter by: ")
                 val noteCategory = readln()
                 noteList.removeIf { it.noteCategory != noteCategory }
             }
+
             4 -> {
                 print("Enter 'true' to filter archived notes, 'false' to filter unarchived notes: ")
                 val isNoteArchived = readln().toBooleanStrictOrNull()
@@ -185,16 +199,19 @@ fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
                     noteList.removeIf { it.isNoteArchived != isNoteArchived }
                 }
             }
+
             5 -> {
                 print("Enter the note updated at to filter by: ")
                 val updatedAt = readln()
                 noteList.removeIf { it.updatedAt.compareTo(LocalDateTime.parse(updatedAt)) != 0 }
             }
+
             6 -> {
                 print("Enter the note created at to filter by: ")
                 val createdAt = readln()
                 noteList.removeIf { it.createdAt.compareTo(LocalDateTime.parse(createdAt)) != 0 }
             }
+
             else -> {
                 println("Error: invalid option. Please enter a valid option.")
                 continue
@@ -241,15 +258,7 @@ fun getSortedNotes(noteList: MutableList<Note> = noteAPI.findAll()): MutableList
     return noteList
 }
 
-fun mainMenu() : Int {
-    logger.debug { "mainMenu() function invoked" }
-
-    println(UITables.mainMenu)
-
-    return scanner.readNextInt("Enter option: ")
-}
-
-fun addNote(){
+fun addNote() {
     logger.debug { "addNote() function invoked" }
 
     val note = generateNote()
@@ -257,31 +266,111 @@ fun addNote(){
     logger.debug { "Adding note: $note" }
     noteAPI.add(note)
 
-    println("\nThe following employee was added successfully:\n")
-    println(noteAPI.generateNoteTable(noteAPI.findUsingNote(note) ?: note).renderText(border=TextBorder.ROUNDED))
+    println("\nThe following note was added successfully:\n")
+    println(noteAPI.generateNoteTable(noteAPI.findUsingNote(note) ?: note).renderText(border = TextBorder.ROUNDED))
+}
+
+fun viewNote() {
+    logger.debug { "viewNote() function invoked" }
+
+    getNoteByIndex() ?: return
+}
+
+fun updateNote() {
+    logger.debug { "updateNote() function invoked" }
+
+    val note = getNoteByIndex() ?: return
+
+    println("\nPlease enter the new details for the note (Enter nothing to keep previous value):")
+
+    val updatedNote = generateNote(note)
+    updatedNote.createdAt = note.createdAt
+
+    logger.debug { "Note found, updating note" }
+    noteAPI.updateNote(noteAPI.findIndexUsingNote(note)!!, updatedNote)
+
+    println("\nThe note was updated successfully:\n")
+    println(noteAPI.generateNoteTable(updatedNote).renderText(border = TextBorder.ROUNDED))
+}
+
+
+fun deleteNote() {
+    logger.debug { "deleteNote() function invoked" }
+
+    if (noteAPI.numberOfNotes() == 0) {
+        println("No notes found.")
+        return
+    }
+
+    printAllNotes()
+
+    //only ask the user to choose the note to delete if notes exist
+    val indexToDelete = readNextInt("Enter the index of the note to delete: ")
+    //pass the index of the note to NoteAPI for deleting and check for success.
+    val noteToDelete = noteAPI.deleteNote(indexToDelete)
+    if (noteToDelete != null) {
+        println("Delete Successful! Deleted note: ${noteToDelete.noteTitle}")
+    } else {
+        println("Delete NOT Successful")
+    }
 }
 
 fun archiveNote() {
     logger.debug { "archiveNote() function invoked" }
 
-    listNotes()
-    if (noteAPI.numberOfNotes() > 0) {
-        //only ask the user to choose the note if notes exist
-        val indexToUpdate = readNextInt("Enter the index of the note to archive: ")
-        if (noteAPI.isValidIndex(indexToUpdate)) {
-            //pass the index of the note and the new note details to NoteAPI for updating and check for success.
-            if (noteAPI.archiveNote(indexToUpdate)){
-                println("Archive Successful")
-            } else {
-                println("Archive Failed")
-            }
+    if (noteAPI.numberOfNotes() == 0) {
+        println("No notes found.")
+        return
+    }
+
+    printAllNotes()
+
+    //only ask the user to choose the note if notes exist
+    val indexToUpdate = readNextInt("Enter the index of the note to archive: ")
+    if (noteAPI.isValidIndex(indexToUpdate)) {
+        //pass the index of the note and the new note details to NoteAPI for updating and check for success.
+        if (noteAPI.archiveNote(indexToUpdate)) {
+            println("Archive Successful")
         } else {
-            println("There are no notes for this index number")
+            println("Archive Failed")
         }
+    } else {
+        println("There are no notes for this index number")
     }
 }
 
-fun listNotes(){
+fun searchNotes() {
+    logger.debug { "searchNotes() function invoked" }
+
+    val noteList = getMultipleNotesByIndex() ?: return
+    val filteredNoteList = getFilteredNotes(noteList) ?: return
+    val sortedNoteList = getSortedNotes(filteredNoteList)
+
+    println("Here are the notes you wanted to view:")
+    println(noteAPI.generateMultipleNotesTable(sortedNoteList).renderText(border = TextBorder.ROUNDED))
+}
+
+fun removeMultipleNotes() {
+    logger.debug { "removeMultipleNotes() function invoked" }
+
+    val noteList = getMultipleNotesByIndex() ?: return
+
+    println("Here are the notes you wanted to remove:")
+    println(noteAPI.generateMultipleNotesTable(noteList).renderText(border = TextBorder.ROUNDED))
+
+    print("Are you sure you want to remove these notes? (y/n): ")
+    val delete = readln().toCharArray().getOrNull(0)
+    if (delete != 'y') {
+        println("Notes not deleted.")
+        return
+    }
+
+    logger.debug { "Removing multiple notes" }
+    noteAPI.removeMultipleNotes(noteList)
+    println("Notes deleted.")
+}
+
+fun listNotes() {
     logger.debug { "listNotes() function invoked" }
 
     println(UITables.listNotesMenu)
@@ -296,73 +385,11 @@ fun listNotes(){
     }
 }
 
-fun listNotesByPriority(){
+fun listNotesByPriority() {
     logger.debug { "listNotesByPriority() function invoked" }
 
     val notePriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
     println(noteAPI.listNotesBySelectedPriority(notePriority))
-}
-
-fun updateNote() {
-    logger.debug { "updateNote() function invoked" }
-
-    val note = getNoteByIndex() ?: return
-
-    println("\nPlease enter the new details for the note (Enter nothing to keep previous value):")
-
-    val updatedNote = generateNote(note)
-    updatedNote.createdAt = note.createdAt
-
-    logger.debug { "Employee found, updating employee" }
-    noteAPI.updateNote(noteAPI.findIndexUsingNote(note)!!, updatedNote)
-
-    println("\nThe employee was updated successfully:\n")
-    println(noteAPI.generateNoteTable(updatedNote).renderText(border=TextBorder.ROUNDED))
-}
-
-
-fun deleteNote(){
-    logger.debug { "deleteNote() function invoked" }
-
-    listNotes()
-
-    if (noteAPI.numberOfNotes() > 0) {
-        //only ask the user to choose the note to delete if notes exist
-        val indexToDelete = readNextInt("Enter the index of the note to delete: ")
-        //pass the index of the note to NoteAPI for deleting and check for success.
-        val noteToDelete = noteAPI.deleteNote(indexToDelete)
-        if (noteToDelete != null) {
-            println("Delete Successful! Deleted note: ${noteToDelete.noteTitle}")
-        } else {
-            println("Delete NOT Successful")
-        }
-    }
-}
-
-fun searchNotes() {
-    logger.debug { "searchNotes() function invoked" }
-
-    val searchTitle = readNextLine("Enter the description to search by: ")
-    val searchResults = noteAPI.searchByTitle(searchTitle)
-    if (searchResults.isEmpty()) {
-        println("No notes found")
-    } else {
-        println(searchResults)
-    }
-}
-
-
-fun save() {
-    logger.debug { "save() function invoked" }
-
-    try {
-        noteAPI.store()
-        println("Notes saved successfully:")
-
-        println(noteAPI.generateAllNotesTable().renderText(border=TextBorder.ROUNDED))
-    } catch (e: Exception) {
-        System.err.println("Error writing to file: $e")
-    }
 }
 
 fun load() {
@@ -372,7 +399,7 @@ fun load() {
         if (noteAPI.load()) {
             println("Notes loaded successfully:")
 
-            println(noteAPI.generateAllNotesTable().renderText(border=TextBorder.ROUNDED))
+            printAllNotes()
         } else {
             println("Error loading notes, see debug log for more info")
         }
@@ -381,13 +408,33 @@ fun load() {
     }
 }
 
+fun save() {
+    logger.debug { "save() function invoked" }
+
+    try {
+        noteAPI.store()
+        println("Notes saved successfully:")
+
+        printAllNotes()
+    } catch (e: Exception) {
+        System.err.println("Error writing to file: $e")
+    }
+}
 
 
-fun exitApp(){
+fun exitApp() {
     logger.debug { "exitApp() function invoked" }
 
-    logger.debug {"Exiting...bye"}
+    logger.debug { "Exiting...bye" }
     exitProcess(0)
+}
+
+fun mainMenu(): Int {
+    logger.debug { "mainMenu() function invoked" }
+
+    println(UITables.mainMenu)
+
+    return scanner.readNextInt("Enter option: ")
 }
 
 fun runMenu() {
@@ -395,39 +442,29 @@ fun runMenu() {
 
     do {
         when (val option = mainMenu()) {
-            1  -> addNote()
-            2  -> viewNote()
-            3  -> updateNote()
-            4  -> deleteNote()
+            1 -> addNote()
+            2 -> viewNote() // TODO: Add dedicated ui table e.g. like payslip
+            3 -> updateNote()
+            4 -> deleteNote()
             5 -> archiveNote()
             6 -> searchNotes()
-            7 -> deleteMultipleNotes()
-            8 -> listNotes()
+            7 -> removeMultipleNotes()
+            8 -> listNotes() // TODO: Add ui table
             9 -> load()
             10 -> save()
             -98 -> SerializerUtils.generateSeededFiles()
             -99 -> noteAPI.seedNotes()
-            0  -> exitApp()
+            0 -> exitApp()
             else -> println("Invalid option entered: $option")
         }
     } while (true)
 }
 
-fun deleteMultipleNotes() {
-    logger.debug { "deleteMultipleNotes() function invoked" }
-    TODO("Not yet implemented")
-}
-
-fun viewNote() {
-    logger.debug { "viewNote() function invoked" }
-
-    getNoteByIndex() ?: return
-}
-
-fun main(args: Array<String>) {
+fun main() {
     logger.debug { "main() function invoked" }
     // https://patorjk.com/software/taag/
-    println("""
+    println(
+        """
         .__   __.   ______   .___________. _______     _______.        ___      .______   .______   
         |  \ |  |  /  __  \  |           ||   ____|   /       |       /   \     |   _  \  |   _  \  
         |   \|  | |  |  |  | `---|  |----`|  |__     |   (----`      /  ^  \    |  |_)  | |  |_)  | 
@@ -435,7 +472,10 @@ fun main(args: Array<String>) {
         |  |\   | |  `--'  |     |  |     |  |____.----)   |       /  _____  \  |  |      |  |      
         |__| \__|  \______/      |__|     |_______|_______/       /__/     \__\ | _|      | _|      
 
-    """.trimIndent())
+    """.trimIndent()
+    )
+
+    load()
 
     runMenu()
 }
