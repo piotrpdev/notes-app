@@ -9,5 +9,4 @@ data class Note(
     var isNoteArchived: Boolean,
     var updatedAt: LocalDateTime = LocalDateTime.now(),
     var createdAt: LocalDateTime = LocalDateTime.now()
-) {
-}
+)

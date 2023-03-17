@@ -28,7 +28,7 @@ class YAMLSerializer(private val file: File) : Serializer {
                 .build()
         ).registerModule(JavaTimeModule())
 
-        val obj = mapper.readValue(file, object: TypeReference<ArrayList<Note?>?>(){})!!
+        val obj = mapper.readValue(file, object : TypeReference<ArrayList<Note?>?>() {})!!
 
         return isArrayList(obj)
     }

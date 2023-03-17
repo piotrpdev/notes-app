@@ -92,7 +92,7 @@ object UITables {
                 }
             }
         }
-    }.renderText(border= TextBorder.ROUNDED)
+    }.renderText(border = TextBorder.ROUNDED)
 
     val listNotesMenu = table {
         cellStyle {
@@ -141,7 +141,7 @@ object UITables {
                 }
             }
         }
-    }.renderText(border= TextBorder.ROUNDED)
+    }.renderText(border = TextBorder.ROUNDED)
 
     @JvmStatic
     fun noteInfoTemplate(title: String, data: List<Note>, allNotes: Boolean) = table {
