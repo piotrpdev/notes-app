@@ -20,7 +20,7 @@ class NoteAPI(serializerType: Serializer) {
     fun deleteNote(indexToDelete: Int): Note? =
         if (isValidListIndex(indexToDelete, notes)) notes.removeAt(indexToDelete) else null
 
-    fun removeMultipleNotes(noteList: List<Note>) = notes.removeAll(noteList)
+    fun removeMultipleNotes(noteList: List<Note>) = notes.removeAll(noteList.toSet())
 
     fun updateNote(indexToUpdate: Int, note: Note): Boolean = findNote(indexToUpdate)?.apply {
         noteTitle = note.noteTitle
@@ -38,22 +38,22 @@ class NoteAPI(serializerType: Serializer) {
     fun findAll(): MutableList<Note> = notes.toMutableList()
 
     fun listAllNotes(): String = if (notes.isEmpty()) "No notes stored" else
-        generateAllNotesTable().renderText(border= TextBorder.ROUNDED)
+        generateAllNotesTable().renderText(border = TextBorder.ROUNDED)
 
 
     fun listActiveNotes(): String = if (notes.isEmpty() || numberOfActiveNotes() == 0) "No active notes stored"
     else
-        generateMultipleNotesTable(notes.filter { note -> !note.isNoteArchived }).renderText(border= TextBorder.ROUNDED)
+        generateMultipleNotesTable(notes.filter { note -> !note.isNoteArchived }).renderText(border = TextBorder.ROUNDED)
 
 
     fun listArchivedNotes(): String = if (notes.isEmpty() || numberOfArchivedNotes() == 0) "No archived notes stored"
     else
-        generateMultipleNotesTable(notes.filter { note -> note.isNoteArchived }).renderText(border= TextBorder.ROUNDED)
+        generateMultipleNotesTable(notes.filter { note -> note.isNoteArchived }).renderText(border = TextBorder.ROUNDED)
 
     fun listNotesBySelectedPriority(priority: Int): String =
         if (notes.isEmpty() || numberOfNotesByPriority(priority) == 0) "No notes with priority"
         else
-            generateMultipleNotesTable(notes.filter { note -> note.notePriority == priority }).renderText(border= TextBorder.ROUNDED)
+            generateMultipleNotesTable(notes.filter { note -> note.notePriority == priority }).renderText(border = TextBorder.ROUNDED)
 
 
     //helper method to determine how many archived notes there are
@@ -71,7 +71,7 @@ class NoteAPI(serializerType: Serializer) {
 
     fun findUsingNote(note: Note): Note? = notes.find { it == note }
 
-    fun findIndexUsingNote(note: Note): Int? = notes.indexOf(note)
+    fun findIndexUsingNote(note: Note): Int = notes.indexOf(note)
 
     //utility method to determine if an index is valid in a list.
     private fun isValidListIndex(index: Int, list: List<Any>): Boolean = (index >= 0 && index < list.size)

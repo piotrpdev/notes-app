@@ -4,8 +4,6 @@ import controllers.NoteAPI
 import models.Note
 import mu.KotlinLogging
 import persistence.XMLSerializer
-import utils.ScannerInput
-import utils.ScannerInput.readNextInt
 import utils.SerializerUtils
 import utils.UITables
 import java.io.File
@@ -13,8 +11,6 @@ import java.time.LocalDateTime
 import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger {}
-
-val scanner = ScannerInput
 
 private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
 //private val noteAPI = NoteAPI(JSONSerializer(File("notes.json")))
@@ -42,7 +38,7 @@ fun generateNote(old: Note? = null): Note {
 
     print("Enter note priority${def(old?.notePriority)}: ")
     var notePriority = readln().toIntOrNull()
-    while (notePriority == null || notePriority < 1 || notePriority > 5) {
+    while (notePriority == null || notePriority !in 1..5) {
         notePriority = if (old != null)
             old.notePriority
         else {
@@ -91,8 +87,7 @@ internal fun getNoteByIndex(): Note? {
     print("Enter the index of the note you want to use: ")
     val noteIndex = readln().toIntOrNull()
 
-    // TODO: Use isValidIndex
-    if (noteIndex == null || noteIndex < 0 || noteIndex >= allNotes.size) {
+    if (noteIndex == null || !noteAPI.isValidIndex(noteIndex)) {
         println("Error: Invalid index. Please enter a valid index.")
         return getNoteByIndex()
     }
@@ -177,7 +172,7 @@ fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
             2 -> {
                 print("Enter the note priority to filter by: ")
                 var notePriority = readln().toIntOrNull()
-                while (notePriority == null) {
+                while (notePriority == null || notePriority !in 1..5) {
                     println("Error: note priority must be a valid number. Please enter a valid note priority.")
                     notePriority = readln().toIntOrNull()
                 }
@@ -287,7 +282,7 @@ fun updateNote() {
     updatedNote.createdAt = note.createdAt
 
     logger.debug { "Note found, updating note" }
-    noteAPI.updateNote(noteAPI.findIndexUsingNote(note)!!, updatedNote)
+    noteAPI.updateNote(noteAPI.findIndexUsingNote(note), updatedNote)
 
     println("\nThe note was updated successfully:\n")
     println(noteAPI.generateNoteTable(updatedNote).renderText(border = TextBorder.ROUNDED))
@@ -304,10 +299,16 @@ fun deleteNote() {
 
     printAllNotes()
 
-    //only ask the user to choose the note to delete if notes exist
-    val indexToDelete = readNextInt("Enter the index of the note to delete: ")
+    print("Enter the index of the note you want to delete: ")
+    val noteIndex = readln().toIntOrNull()
+
+    if (noteIndex == null || !noteAPI.isValidIndex(noteIndex)) {
+        println("Error: Invalid index. Please enter a valid index.")
+        return deleteNote()
+    }
+
     //pass the index of the note to NoteAPI for deleting and check for success.
-    val noteToDelete = noteAPI.deleteNote(indexToDelete)
+    val noteToDelete = noteAPI.deleteNote(noteIndex)
     if (noteToDelete != null) {
         println("Delete Successful! Deleted note: ${noteToDelete.noteTitle}")
     } else {
@@ -325,17 +326,19 @@ fun archiveNote() {
 
     printAllNotes()
 
-    //only ask the user to choose the note if notes exist
-    val indexToUpdate = readNextInt("Enter the index of the note to archive: ")
-    if (noteAPI.isValidIndex(indexToUpdate)) {
-        //pass the index of the note and the new note details to NoteAPI for updating and check for success.
-        if (noteAPI.archiveNote(indexToUpdate)) {
-            println("Archive Successful")
-        } else {
-            println("Archive Failed")
-        }
+    print("Enter the index of the note you want to archive: ")
+    val noteIndex = readln().toIntOrNull()
+
+    if (noteIndex == null || !noteAPI.isValidIndex(noteIndex)) {
+        println("Error: Invalid index. Please enter a valid index.")
+        return archiveNote()
+    }
+
+    //pass the index of the note and the new note details to NoteAPI for updating and check for success.
+    if (noteAPI.archiveNote(noteIndex)) {
+        println("Archive Successful")
     } else {
-        println("There are no notes for this index number")
+        println("Archive Failed")
     }
 }
 
@@ -375,7 +378,9 @@ fun listNotes() {
 
     println(UITables.listNotesMenu)
 
-    when (scanner.readNextInt("Enter option: ")) {
+    print("Enter option: ")
+
+    when (readln().toIntOrNull()) {
         1 -> println(noteAPI.listAllNotes())
         2 -> println(noteAPI.listActiveNotes())
         3 -> println(noteAPI.listArchivedNotes())
@@ -388,7 +393,14 @@ fun listNotes() {
 fun listNotesByPriority() {
     logger.debug { "listNotesByPriority() function invoked" }
 
-    val notePriority = readNextInt("Enter a priority (1-low, 2, 3, 4, 5-high): ")
+    print("Enter a priority (1-low, 2, 3, 4, 5-high): ")
+    val notePriority = readln().toIntOrNull()
+
+    if (notePriority == null || notePriority !in 1..5) {
+        println("Error: Invalid note priority. Please enter a valid one.")
+        return listNotesByPriority()
+    }
+
     println(noteAPI.listNotesBySelectedPriority(notePriority))
 }
 
@@ -429,12 +441,14 @@ fun exitApp() {
     exitProcess(0)
 }
 
-fun mainMenu(): Int {
+fun mainMenu(): Int? {
     logger.debug { "mainMenu() function invoked" }
 
     println(UITables.mainMenu)
 
-    return scanner.readNextInt("Enter option: ")
+    print("Enter option: ")
+
+    return readln().toIntOrNull()
 }
 
 fun runMenu() {
