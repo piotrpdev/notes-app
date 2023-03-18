@@ -524,7 +524,7 @@ fun runMenu() {
     do {
         when (val option = mainMenu()) {
             1 -> addNote()
-            2 -> viewNote() // TODO: Add dedicated ui table e.g. like payslip
+            2 -> viewNote()
             3 -> updateNote()
             4 -> deleteNote()
             5 -> archiveNote()
