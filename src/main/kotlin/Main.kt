@@ -434,9 +434,37 @@ fun listNotes() {
         2 -> println(noteAPI.listActiveNotes())
         3 -> println(noteAPI.listArchivedNotes())
         4 -> listNotesByPriority()
+        5 -> listStaleNotes()
+        6 -> listImportantNotes()
         0 -> {} // https://stackoverflow.com/questions/60755131/how-to-handle-empty-in-kotlins-when
         else -> println("Invalid choice")
     }
+}
+
+/**
+ * Lists notes based on a specified number of days.
+ */
+fun listStaleNotes() {
+    logger.debug { "listStaleNotes() function invoked" }
+
+    print("Show notes that haven't been updated in this many days: ")
+    val days = readln().toIntOrNull()
+
+    if (days == null || days < 0) {
+        println("Error: Invalid number of days. Please enter a valid number.")
+        return listStaleNotes()
+    }
+
+    println(noteAPI.listStaleNotes(days))
+}
+
+/**
+ * Lists notes with a priority of 1.
+ */
+fun listImportantNotes() {
+    logger.debug { "listImportantNotes() function invoked" }
+
+    println(noteAPI.listImportantNotes())
 }
 
 /**

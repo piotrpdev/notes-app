@@ -30,11 +30,11 @@ class NoteAPITest {
 
     @BeforeEach
     fun setup() {
-        learnKotlin = Note("Learning Kotlin", 5, "College", false)
-        summerHoliday = Note("Summer Holiday to France", 1, "Holiday", false)
-        codeApp = Note("Code App", 4, "Work", false)
-        testApp = Note("Test App", 4, "Work", false)
-        swim = Note("Swim - Pool", 3, "Hobby", false)
+        learnKotlin = Note("Learning Kotlin", 5, "College", false, ldp("2023-03-10T10:00"), ldp("2023-03-10T10:00"))
+        summerHoliday = Note("Summer Holiday to France", 1, "Holiday", false, ldp("2023-03-10T20:00"), ldp("2023-03-10T19:30"))
+        codeApp = Note("Code App", 4, "Work", false, ldp("2023-03-08T12:15"), ldp("2023-03-08T12:00"))
+        testApp = Note("Test App", 4, "Work", false, ldp("2023-03-12T15:30"), ldp("2023-03-11T13:00"))
+        swim = Note("Swim - Pool", 3, "Hobby", false, ldp("2023-03-11T14:00"), ldp("2023-03-11T13:45"))
 
         //adding 5 Note to the notes api
         populatedNotes!!.add(learnKotlin!!)
@@ -234,7 +234,6 @@ class NoteAPITest {
             assertTrue(notesString.contains("summer holiday"))
         }
 
-        // Test for findNoteByPriority
         @Test
         fun `listNotesBySelectedPriority returns No Notes with Priority Stored message when ArrayList is empty`() {
             assertEquals(0, emptyNotes!!.numberOfNotes())
@@ -253,6 +252,49 @@ class NoteAPITest {
             val notesString = populatedNotes!!.listNotesBySelectedPriority(4).lowercase()
             assertTrue(notesString.contains("code app"))
             assertTrue(notesString.contains("test app"))
+        }
+
+        @Test
+        fun `listStaleNotes returns No Stale Notes Stored message when ArrayList is empty`() {
+            assertEquals(0, emptyNotes!!.numberOfNotes())
+            assertTrue(emptyNotes!!.listStaleNotes(1).lowercase().contains("no stale notes"))
+        }
+
+        @Test
+        fun `listStaleNotes returns No Stale Notes Stored message when ArrayList has no stale notes stored`() {
+            assertEquals(5, populatedNotes!!.numberOfNotes())
+            assertTrue(populatedNotes!!.listStaleNotes(365*100).lowercase().contains("no stale notes"))
+        }
+
+        @Test
+        fun `listStaleNotes returns Stale Notes when ArrayList has stale notes stored`() {
+            assertEquals(5, populatedNotes!!.numberOfNotes())
+            val notesString = populatedNotes!!.listStaleNotes(1).lowercase()
+            assertTrue(notesString.contains("learning kotlin"))
+            assertTrue(notesString.contains("code app"))
+            assertTrue(notesString.contains("test app"))
+            assertTrue(notesString.contains("swim"))
+            assertTrue(notesString.contains("summer holiday"))
+        }
+
+        @Test
+        fun `listImportantNotes returns No Important Notes Stored message when ArrayList is empty`() {
+            assertEquals(0, emptyNotes!!.numberOfNotes())
+            assertTrue(emptyNotes!!.listImportantNotes().lowercase().contains("no important notes"))
+        }
+
+        @Test
+        fun `listImportantNotes returns No Important Notes Stored message when ArrayList has no important notes stored`() {
+            assertEquals(5, populatedNotes!!.numberOfNotes())
+            populatedNotes!!.deleteNote(populatedNotes!!.findIndexUsingNote(summerHoliday!!))
+            assertTrue(populatedNotes!!.listImportantNotes().lowercase().contains("no important notes"))
+        }
+
+        @Test
+        fun `listImportantNotes returns Important Notes when ArrayList has important notes stored`() {
+            assertEquals(5, populatedNotes!!.numberOfNotes())
+            val notesString = populatedNotes!!.listImportantNotes().lowercase()
+            assertTrue(notesString.contains("summer holiday"))
         }
     }
 
@@ -543,6 +585,20 @@ class NoteAPITest {
             assertEquals(2, populatedNotes!!.numberOfNotesByPriority(4))
             assertEquals(1, populatedNotes!!.numberOfNotesByPriority(5))
             assertEquals(0, emptyNotes!!.numberOfNotesByPriority(1))
+        }
+
+        @Test
+        fun numberOfStaleNotesCalculatedCorrectly() {
+            assertEquals(5, populatedNotes!!.numberOfStaleNotes(0))
+            assertEquals(5, populatedNotes!!.numberOfStaleNotes(1))
+            assertEquals(0, populatedNotes!!.numberOfStaleNotes(365*100))
+            assertEquals(0, populatedNotes!!.numberOfStaleNotes(365*50))
+        }
+
+        @Test
+        fun numberOfImportantNotesCalculatedCorrectly() {
+            assertEquals(1, populatedNotes!!.numberOfImportantNotes())
+            assertEquals(0, emptyNotes!!.numberOfImportantNotes())
         }
     }
 

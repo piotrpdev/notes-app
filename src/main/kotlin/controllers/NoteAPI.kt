@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 /**
  * A class representing a Note API that allows for managing notes using a provided serializer.
  *
- * @property serializerType The serializer used for storing and retrieving notes.
+ * @param serializerType The serializer used for storing and retrieving notes.
  */
 class NoteAPI(serializerType: Serializer) {
 
@@ -116,6 +116,25 @@ class NoteAPI(serializerType: Serializer) {
             generateMultipleNotesTable(notes.filter { note -> note.notePriority == priority }).renderText(border = TextBorder.ROUNDED)
 
     /**
+     * Lists all notes that haven't been updated in a given number of days.
+     *
+     * @param days The number of days to filter notes by.
+     * @return A formatted string with all stale notes or a message indicating no stale notes stored.
+     */
+    fun listStaleNotes(days: Int): String = if (notes.isEmpty() || numberOfStaleNotes(days) == 0) "No stale notes stored"
+    else
+        generateMultipleNotesTable(notes.filter { note -> note.updatedAt.isBefore(LocalDateTime.now().minusDays(days.toLong())) }.sortedBy { it.updatedAt }).renderText(border = TextBorder.ROUNDED)
+
+    /**
+     * Lists notes with a priority of 1.
+     *
+     * @return A formatted string with all important notes or a message indicating no important notes stored.
+     */
+    fun listImportantNotes(): String = if (notes.isEmpty() || numberOfImportantNotes() == 0) "No important notes stored"
+    else
+        generateMultipleNotesTable(notes.filter { note -> note.notePriority == 1 }).renderText(border = TextBorder.ROUNDED)
+
+    /**
      * Retrieves the number of archived notes.
      *
      * @return The number of archived notes.
@@ -136,6 +155,21 @@ class NoteAPI(serializerType: Serializer) {
      * @return The number of notes with the specified priority.
      */
     fun numberOfNotesByPriority(priority: Int): Int = notes.count { it.notePriority == priority }
+
+    /**
+     * Retrieves the number of notes that haven't been updated in a given number of days.
+     *
+     * @param days The number of days to filter notes by.
+     * @return The number of stale notes.
+     */
+    fun numberOfStaleNotes(days: Int): Int = notes.count { it.updatedAt.isBefore(LocalDateTime.now().minusDays(days.toLong())) }
+
+    /**
+     * Retrieves the number of notes with a priority of 1.
+     *
+     * @return The number of important notes.
+     */
+    fun numberOfImportantNotes(): Int = notes.count { it.notePriority == 1 }
 
     /**
      * Retrieves the total number of notes.
