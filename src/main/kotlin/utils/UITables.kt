@@ -136,6 +136,14 @@ object UITables {
             row {
                 cell("4")
                 cell("List Notes by Priority")
+            }
+            row {
+                cell("5")
+                cell("List Stale Notes")
+            }
+            row {
+                cell("6")
+                cell("List Important Notes")
                 cellStyle {
                     borderBottom = true
                 }
