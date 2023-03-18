@@ -1,6 +1,8 @@
 # SETU Notes App [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-Project for SETU Software Development Tools module. Made using Kotlin.
+SETU Notes App is a powerful and user-friendly note-taking application built using Kotlin. This app allows you to manage your notes with ease and offers advanced features for organizing and searching through your notes.
+
+_(Project for SETU Software Development Tools module.)_
 
 > _"It is a revolutionary app for managing notes, I have never seen anything like it. I would say it stands among the giants in the industry such as Samsung Notes and Apple Notes."_ - Piotr Placzek (Creator and CEO)
 
