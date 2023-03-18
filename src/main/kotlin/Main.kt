@@ -16,8 +16,16 @@ private val noteAPI = NoteAPI(XMLSerializer(File("notes.xml")))
 //private val noteAPI = NoteAPI(JSONSerializer(File("notes.json")))
 //private val noteAPI = NoteAPI(YAMLSerializer(File("notes.yaml")))
 
+/**
+ * Prints all notes in a tabular format with rounded borders.
+ */
 fun printAllNotes() = println(noteAPI.generateAllNotesTable().renderText(border = TextBorder.ROUNDED))
 
+/**
+ * Generates a new note instance using user input for note properties.
+ * @param old An optional Note instance to update. The new note will use the old note's properties as default values.
+ * @return A new Note instance with the provided properties.
+ */
 fun generateNote(old: Note? = null): Note {
     logger.debug { "Generating note" }
 
@@ -72,6 +80,10 @@ fun generateNote(old: Note? = null): Note {
     return Note(noteTitle, notePriority, noteCategory, isNoteArchived == 'y')
 }
 
+/**
+ * Retrieves a Note instance based on its index.
+ * @return The Note instance found, or null if not found.
+ */
 internal fun getNoteByIndex(): Note? {
     logger.debug { "Trying to get note by index" }
 
@@ -102,6 +114,10 @@ internal fun getNoteByIndex(): Note? {
     return note
 }
 
+/**
+ * Retrieves multiple Note instances based on their index.
+ * @return A MutableList of Note instances found, or null if none found.
+ */
 internal fun getMultipleNotesByIndex(): MutableList<Note>? {
     logger.debug { "Trying to get multiple notes by index" }
 
@@ -150,6 +166,11 @@ internal fun getMultipleNotesByIndex(): MutableList<Note>? {
     return noteList.ifEmpty { null }
 }
 
+/**
+ * Filters a MutableList of Note instances based on user input.
+ * @param noteList The MutableList of Note instances to filter.
+ * @return A MutableList of filtered Note instances, or null if none found.
+ */
 fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
     logger.debug { "Trying to get filtered notes" }
 
@@ -225,6 +246,11 @@ fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
     return noteList.ifEmpty { null }
 }
 
+/**
+ * Sorts a MutableList of Note instances based on user input.
+ * @param noteList The MutableList of Note instances to sort. Defaults to all notes.
+ * @return A MutableList of sorted Note instances.
+ */
 fun getSortedNotes(noteList: MutableList<Note> = noteAPI.findAll()): MutableList<Note> {
     logger.debug { "Trying to get sorted notes" }
 
@@ -253,6 +279,9 @@ fun getSortedNotes(noteList: MutableList<Note> = noteAPI.findAll()): MutableList
     return noteList
 }
 
+/**
+ * Adds a new note to the NoteAPI using user input for properties.
+ */
 fun addNote() {
     logger.debug { "addNote() function invoked" }
 
@@ -265,12 +294,18 @@ fun addNote() {
     println(noteAPI.generateNoteTable(noteAPI.findUsingNote(note) ?: note).renderText(border = TextBorder.ROUNDED))
 }
 
+/**
+ * Displays a selected note based on its index.
+ */
 fun viewNote() {
     logger.debug { "viewNote() function invoked" }
 
     getNoteByIndex() ?: return
 }
 
+/**
+ * Updates an existing note with new properties based on user input.
+ */
 fun updateNote() {
     logger.debug { "updateNote() function invoked" }
 
@@ -288,7 +323,9 @@ fun updateNote() {
     println(noteAPI.generateNoteTable(updatedNote).renderText(border = TextBorder.ROUNDED))
 }
 
-
+/**
+ * Deletes a note based on its index.
+ */
 fun deleteNote() {
     logger.debug { "deleteNote() function invoked" }
 
@@ -316,6 +353,9 @@ fun deleteNote() {
     }
 }
 
+/**
+ * Toggles the archive status of a note based on its index.
+ */
 fun archiveNote() {
     logger.debug { "archiveNote() function invoked" }
 
@@ -342,6 +382,9 @@ fun archiveNote() {
     }
 }
 
+/**
+ * Searches for notes based on index, filters, and sorts them based on user input.
+ */
 fun searchNotes() {
     logger.debug { "searchNotes() function invoked" }
 
@@ -353,6 +396,9 @@ fun searchNotes() {
     println(noteAPI.generateMultipleNotesTable(sortedNoteList).renderText(border = TextBorder.ROUNDED))
 }
 
+/**
+ * Removes multiple notes based on their index.
+ */
 fun removeMultipleNotes() {
     logger.debug { "removeMultipleNotes() function invoked" }
 
@@ -373,6 +419,9 @@ fun removeMultipleNotes() {
     println("Notes deleted.")
 }
 
+/**
+ * Lists notes based on user-selected criteria.
+ */
 fun listNotes() {
     logger.debug { "listNotes() function invoked" }
 
@@ -390,6 +439,9 @@ fun listNotes() {
     }
 }
 
+/**
+ * Lists notes based on a specified priority.
+ */
 fun listNotesByPriority() {
     logger.debug { "listNotesByPriority() function invoked" }
 
@@ -404,6 +456,9 @@ fun listNotesByPriority() {
     println(noteAPI.listNotesBySelectedPriority(notePriority))
 }
 
+/**
+ * Loads notes from an external file.
+ */
 fun load() {
     logger.debug { "load() function invoked" }
 
@@ -420,6 +475,9 @@ fun load() {
     }
 }
 
+/**
+ * Saves notes to an external file.
+ */
 fun save() {
     logger.debug { "save() function invoked" }
 
@@ -433,7 +491,9 @@ fun save() {
     }
 }
 
-
+/**
+ * Exits the application.
+ */
 fun exitApp() {
     logger.debug { "exitApp() function invoked" }
 
@@ -441,6 +501,10 @@ fun exitApp() {
     exitProcess(0)
 }
 
+/**
+ * Displays the main menu of the application and reads user input for the selected option.
+ * @return The user's selected option as an Int, or null if an invalid option was entered.
+ */
 fun mainMenu(): Int? {
     logger.debug { "mainMenu() function invoked" }
 
@@ -451,6 +515,9 @@ fun mainMenu(): Int? {
     return readln().toIntOrNull()
 }
 
+/**
+ * Show menu and handle user choices.
+ */
 fun runMenu() {
     logger.debug { "runMenu() function invoked" }
 
@@ -463,7 +530,7 @@ fun runMenu() {
             5 -> archiveNote()
             6 -> searchNotes()
             7 -> removeMultipleNotes()
-            8 -> listNotes() // TODO: Add ui table
+            8 -> listNotes()
             9 -> load()
             10 -> save()
             -98 -> SerializerUtils.generateSeededFiles()
@@ -474,6 +541,9 @@ fun runMenu() {
     } while (true)
 }
 
+/**
+ * Start the Notes App.
+ */
 fun main() {
     logger.debug { "main() function invoked" }
     // https://patorjk.com/software/taag/
