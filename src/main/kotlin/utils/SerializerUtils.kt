@@ -8,9 +8,24 @@ import persistence.YAMLSerializer
 import java.io.File
 import java.time.LocalDateTime
 
+/**
+ * An object containing utility functions for serialization and deserialization of notes, as well as generating seed data.
+ */
 object SerializerUtils {
+    /**
+     * Parses a string into a LocalDateTime object.
+     *
+     * @param s The string to be parsed.
+     * @return The LocalDateTime object parsed from the string.
+     */
     fun ldp(s: String): LocalDateTime = LocalDateTime.parse(s)
 
+    /**
+     * Checks if the given object is an ArrayList of Note objects.
+     *
+     * @param obj The object to be checked.
+     * @return The ArrayList of Note objects if the given object is of the correct type, null otherwise.
+     */
     @JvmStatic
     fun isArrayList(obj: Any): ArrayList<Note>? = if (obj is ArrayList<*> && obj.all { it is Note }) {
         @Suppress("UNCHECKED_CAST")
@@ -19,6 +34,11 @@ object SerializerUtils {
         null
     }
 
+    /**
+     * Returns an ArrayList of Note objects containing seeded data.
+     *
+     * @return The ArrayList of seeded Note objects.
+     */
     @JvmStatic
     fun getSeededNotes(): ArrayList<Note> {
         val notes = ArrayList<Note>()
@@ -38,6 +58,9 @@ object SerializerUtils {
         return notes
     }
 
+    /**
+     * Generates and stores seed data as XML, JSON, and YAML files.
+     */
     @JvmStatic
     fun generateSeededFiles() {
         val noteAPIs = ArrayList<NoteAPI>()

@@ -8,7 +8,13 @@ import models.Note
 
 // DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).format(date)
 
+/**
+ * An object containing preconfigured tables for displaying user interface elements related to notes.
+ */
 object UITables {
+    /**
+     * The main menu table, displayed as a formatted string.
+     */
     val mainMenu = table {
         cellStyle {
             alignment = TextAlignment.MiddleRight
@@ -94,6 +100,9 @@ object UITables {
         }
     }.renderText(border = TextBorder.ROUNDED)
 
+    /**
+     * The list notes menu table, displayed as a formatted string.
+     */
     val listNotesMenu = table {
         cellStyle {
             alignment = TextAlignment.MiddleRight
@@ -143,6 +152,14 @@ object UITables {
         }
     }.renderText(border = TextBorder.ROUNDED)
 
+    /**
+     * Generates a table containing note information, using a predefined template.
+     *
+     * @param title The title to display in the table.
+     * @param data The list of notes to display in the table.
+     * @param allNotes A flag indicating whether to display all notes (default is false).
+     * @return A table containing the note information.
+     */
     @JvmStatic
     fun noteInfoTemplate(title: String, data: List<Note>, allNotes: Boolean) = table {
         cellStyle {
