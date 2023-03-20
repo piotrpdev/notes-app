@@ -11,8 +11,6 @@
       <option name="taskNames">
         <list>
           <option value=":test" />
-          <option value="--tests" />
-          <option value="&quot;controllers.NoteAPITest&quot;" />
         </list>
       </option>
       <option name="vmOptions" />
@@ -22,12 +20,12 @@
     <EXTENSION ID="com.intellij.execution.ExternalSystemRunConfigurationJavaExtension">
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="utils.ScannerInput" />
+          <option name="PATTERN" value="MainKt" />
           <option name="ENABLED" value="true" />
           <option name="INCLUDE" value="false" />
         </pattern>
         <pattern>
-          <option name="PATTERN" value="MainKt" />
+          <option name="PATTERN" value="TestUtils" />
           <option name="ENABLED" value="true" />
           <option name="INCLUDE" value="false" />
         </pattern>
