@@ -6,6 +6,8 @@ import mu.KotlinLogging
 import persistence.XMLSerializer
 import utils.SerializerUtils
 import utils.UITables
+import utils.ValidatorUtils.getValidPropertyValue
+import utils.ValidatorUtils.yesNoIsValid
 import java.io.File
 import java.time.LocalDateTime
 import kotlin.system.exitProcess
@@ -29,55 +31,12 @@ fun printAllNotes() = println(noteAPI.generateAllNotesTable().renderText(border 
 fun generateNote(old: Note? = null): Note {
     logger.debug { "Generating note" }
 
-    // ? Trying to update with an invalid value just keeps the old one
-    // def = default; shortened to save space
-    fun def(prop: Any?) = if (old != null) " (${prop})" else ""
+    val noteTitle: String = getValidPropertyValue("noteTitle", old?.noteTitle)
+    val notePriority: Int = getValidPropertyValue("notePriority", old?.notePriority)
+    val noteCategory: String = getValidPropertyValue("noteCategory", old?.noteCategory)
+    val isNoteArchived: Boolean = getValidPropertyValue("isNoteArchived", old?.isNoteArchived)
 
-    print("Enter note title${def(old?.noteTitle)}: ")
-    var noteTitle = readlnOrNull().toString()
-    while (noteTitle.isBlank()) {
-        noteTitle = if (old != null)
-            old.noteTitle
-        else {
-            println("Error: note title cannot be empty. Please enter a valid note title.")
-            readlnOrNull().toString()
-        }
-    }
-
-    print("Enter note priority${def(old?.notePriority)}: ")
-    var notePriority = readln().toIntOrNull()
-    while (notePriority == null || notePriority !in 1..5) {
-        notePriority = if (old != null)
-            old.notePriority
-        else {
-            println("Error: note priority must be a valid non-negative integer between 1 and 5. Please enter a valid note priority.")
-            readln().toIntOrNull()
-        }
-    }
-
-    print("Enter note category${def(old?.noteCategory)}: ")
-    var noteCategory = readlnOrNull().toString()
-    while (noteCategory.isBlank()) {
-        noteCategory = if (old != null)
-            old.noteCategory
-        else {
-            println("Error: note category cannot be empty. Please enter a valid note category.")
-            readlnOrNull().toString()
-        }
-    }
-
-    print("Is note archived? (y/n)${def(if (old?.isNoteArchived == true) "y" else "n")} ")
-    var isNoteArchived = readln().toCharArray().getOrNull(0)
-    while (isNoteArchived != 'y' && isNoteArchived != 'n') {
-        isNoteArchived = if (old != null)
-            if (old.isNoteArchived) 'y' else 'n'
-        else {
-            println("Error: input must be either 'y' or 'n'. Please enter a valid option.")
-            readln().toCharArray()[0]
-        }
-    }
-
-    return Note(noteTitle, notePriority, noteCategory, isNoteArchived == 'y')
+    return Note(noteTitle, notePriority, noteCategory, isNoteArchived)
 }
 
 /**
@@ -96,13 +55,7 @@ internal fun getNoteByIndex(): Note? {
 
     val allNotes = noteAPI.findAll()
 
-    print("Enter the index of the note you want to use: ")
-    val noteIndex = readln().toIntOrNull()
-
-    if (noteIndex == null || !noteAPI.isValidIndex(noteIndex)) {
-        println("Error: Invalid index. Please enter a valid index.")
-        return getNoteByIndex()
-    }
+    val noteIndex: Int = getValidPropertyValue("noteIndex", customValidator = { noteAPI.isValidIndex(it) })
 
     val note = allNotes[noteIndex]
 
@@ -128,9 +81,12 @@ internal fun getMultipleNotesByIndex(): MutableList<Note>? {
 
     printAllNotes()
 
-    print("Do you want to search for multiple notes using their index? (y/n): ")
-    val searchMultiple = readln().toCharArray().getOrNull(0)
-    if (searchMultiple != 'y') {
+    val searchMultiple: Boolean = getValidPropertyValue(
+        "yesNo",
+        customPrompt = "Do you want to search for multiple notes using their index? (y/n): "
+    )
+
+    if (!searchMultiple) {
         logger.debug { "User does not want to search for multiple notes using index" }
         return noteAPI.findAll()
     }
@@ -154,11 +110,15 @@ internal fun getMultipleNotesByIndex(): MutableList<Note>? {
             noteList.add(note)
         }
 
-        print("Do you want to add another note to the list using their index? (y/n): ")
-        val searchAgain = readln().toCharArray().getOrNull(0)
-        if (searchAgain != 'y') {
+        val searchAgain: Boolean = getValidPropertyValue(
+            "yesNo",
+            customPrompt = "Do you want to add another note to the list using their index? (y/n): "
+        )
+
+        if (!searchAgain) {
             searching = false
         }
+
         println()
     }
 
@@ -174,8 +134,12 @@ internal fun getMultipleNotesByIndex(): MutableList<Note>? {
 fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
     logger.debug { "Trying to get filtered notes" }
 
-    print("Do you want to filter the notes? (y/n): ")
-    if (readln().toCharArray()[0] != 'y') {
+    val input: Boolean = getValidPropertyValue(
+        "yesNo",
+        customPrompt = "Do you want to filter the notes? (y/n): "
+    )
+
+    if (!input) {
         logger.debug { "Not filtering notes" }
         return noteList
     }
@@ -185,47 +149,33 @@ fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
         print("How do you want to filter the notes? (1 - Title, 2 - Priority, 3 - Category, 4 - Archived, 5 - Updated At, 6 - Created At): ")
         when (readln().toIntOrNull()) {
             1 -> {
-                print("Enter the note title to filter by: ")
-                val noteTitle = readln()
+                val noteTitle: String = getValidPropertyValue("noteTitle")
                 noteList.removeIf { !it.noteTitle.lowercase().contains(noteTitle.lowercase()) }
             }
 
             2 -> {
-                print("Enter the note priority to filter by: ")
-                var notePriority = readln().toIntOrNull()
-                while (notePriority == null || notePriority !in 1..5) {
-                    println("Error: note priority must be a valid number. Please enter a valid note priority.")
-                    notePriority = readln().toIntOrNull()
-                }
+                val notePriority: Int = getValidPropertyValue("notePriority")
                 noteList.removeIf { it.notePriority != notePriority }
             }
 
             3 -> {
-                print("Enter the note category to filter by: ")
-                val noteCategory = readln()
+                val noteCategory: String = getValidPropertyValue("noteCategory")
                 noteList.removeIf { it.noteCategory != noteCategory }
             }
 
             4 -> {
-                print("Enter 'true' to filter archived notes, 'false' to filter unarchived notes: ")
-                val isNoteArchived = readln().toBooleanStrictOrNull()
-                if (isNoteArchived == null) {
-                    println("Error: please enter 'true' or 'false' for archived status.")
-                } else {
-                    noteList.removeIf { it.isNoteArchived != isNoteArchived }
-                }
+                val isNoteArchived: Boolean = getValidPropertyValue("isNoteArchived")
+                noteList.removeIf { it.isNoteArchived != isNoteArchived }
             }
 
             5 -> {
-                print("Enter the note updated at to filter by: ")
-                val updatedAt = readln()
-                noteList.removeIf { it.updatedAt.compareTo(LocalDateTime.parse(updatedAt)) != 0 }
+                val updatedAt: LocalDateTime = getValidPropertyValue("updatedAt")
+                noteList.removeIf { it.updatedAt.compareTo(updatedAt) != 0 }
             }
 
             6 -> {
-                print("Enter the note created at to filter by: ")
-                val createdAt = readln()
-                noteList.removeIf { it.createdAt.compareTo(LocalDateTime.parse(createdAt)) != 0 }
+                val createdAt: LocalDateTime = getValidPropertyValue("createdAt")
+                noteList.removeIf { it.createdAt.compareTo(createdAt) != 0 }
             }
 
             else -> {
@@ -234,11 +184,15 @@ fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
             }
         }
 
-        print("Do you want to filter the notes again? (y/n): ")
-        val filterAgain = readln().toCharArray().getOrNull(0)
-        if (filterAgain != 'y') {
+        val filterAgain: Boolean = getValidPropertyValue(
+            "yesNo",
+            customPrompt = "Do you want to filter the notes again? (y/n): "
+        )
+
+        if (!filterAgain) {
             filtering = false
         }
+
         println()
     }
 
@@ -254,8 +208,12 @@ fun getFilteredNotes(noteList: MutableList<Note>): MutableList<Note>? {
 fun getSortedNotes(noteList: MutableList<Note> = noteAPI.findAll()): MutableList<Note> {
     logger.debug { "Trying to get sorted notes" }
 
-    print("Do you want to sort the notes? (y/n): ")
-    if (readln().toCharArray()[0] != 'y') {
+    val input: Boolean = getValidPropertyValue(
+        "yesNo",
+        customPrompt = "Do you want to sort the notes? (y/n): "
+    )
+
+    if (!input) {
         logger.debug { "Not sorting notes" }
         return noteList
     }
@@ -336,13 +294,7 @@ fun deleteNote() {
 
     printAllNotes()
 
-    print("Enter the index of the note you want to delete: ")
-    val noteIndex = readln().toIntOrNull()
-
-    if (noteIndex == null || !noteAPI.isValidIndex(noteIndex)) {
-        println("Error: Invalid index. Please enter a valid index.")
-        return deleteNote()
-    }
+    val noteIndex: Int = getValidPropertyValue("noteIndex", customPrompt = "Enter note index to delete: ", customValidator = { noteAPI.isValidIndex(it) })
 
     //pass the index of the note to NoteAPI for deleting and check for success.
     val noteToDelete = noteAPI.deleteNote(noteIndex)
@@ -366,13 +318,7 @@ fun archiveNote() {
 
     printAllNotes()
 
-    print("Enter the index of the note you want to archive: ")
-    val noteIndex = readln().toIntOrNull()
-
-    if (noteIndex == null || !noteAPI.isValidIndex(noteIndex)) {
-        println("Error: Invalid index. Please enter a valid index.")
-        return archiveNote()
-    }
+    val noteIndex: Int = getValidPropertyValue("noteIndex", customPrompt = "Enter note index to archive: ", customValidator = { noteAPI.isValidIndex(it) })
 
     //pass the index of the note and the new note details to NoteAPI for updating and check for success.
     if (noteAPI.archiveNote(noteIndex)) {
@@ -407,9 +353,12 @@ fun removeMultipleNotes() {
     println("Here are the notes you wanted to remove:")
     println(noteAPI.generateMultipleNotesTable(noteList).renderText(border = TextBorder.ROUNDED))
 
-    print("Are you sure you want to remove these notes? (y/n): ")
-    val delete = readln().toCharArray().getOrNull(0)
-    if (delete != 'y') {
+    val delete: Boolean = getValidPropertyValue(
+        "yesNo",
+        customPrompt = "Are you sure you want to remove these notes? (y/n): "
+    )
+
+    if (!delete) {
         println("Notes not deleted.")
         return
     }
@@ -447,13 +396,7 @@ fun listNotes() {
 fun listStaleNotes() {
     logger.debug { "listStaleNotes() function invoked" }
 
-    print("Show notes that haven't been updated in this many days: ")
-    val days = readln().toIntOrNull()
-
-    if (days == null || days < 0) {
-        println("Error: Invalid number of days. Please enter a valid number.")
-        return listStaleNotes()
-    }
+    val days: Int = getValidPropertyValue("staleDays")
 
     println(noteAPI.listStaleNotes(days))
 }
@@ -473,13 +416,7 @@ fun listImportantNotes() {
 fun listNotesByPriority() {
     logger.debug { "listNotesByPriority() function invoked" }
 
-    print("Enter a priority (1-low, 2, 3, 4, 5-high): ")
-    val notePriority = readln().toIntOrNull()
-
-    if (notePriority == null || notePriority !in 1..5) {
-        println("Error: Invalid note priority. Please enter a valid one.")
-        return listNotesByPriority()
-    }
+    val notePriority: Int = getValidPropertyValue("notePriority")
 
     println(noteAPI.listNotesBySelectedPriority(notePriority))
 }
