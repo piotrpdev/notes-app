@@ -150,6 +150,26 @@ class NoteAPITest {
             assertFalse(populatedNotes!!.isValidIndex(-1))
             assertFalse(populatedNotes!!.isValidIndex(5))
         }
+
+        @Test
+        fun `validIndex returns false when index is not a number`() {
+            assertFalse(populatedNotes!!.isValidIndex("a"))
+        }
+
+        @Test
+        fun `validIndex returns false when index is a blank string`() {
+            assertFalse(populatedNotes!!.isValidIndex(""))
+        }
+
+        @Test
+        fun `validIndex returns false when index is null`() {
+            assertFalse(populatedNotes!!.isValidIndex(null))
+        }
+
+        @Test
+        fun `validIndex returns false when index is a decimal number`() {
+            assertFalse(populatedNotes!!.isValidIndex("1.5"))
+        }
     }
 
     @Nested

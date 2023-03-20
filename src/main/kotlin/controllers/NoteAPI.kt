@@ -221,6 +221,8 @@ class NoteAPI(serializerType: Serializer) {
      */
     fun isValidIndex(index: Int): Boolean = isValidListIndex(index, notes)
 
+    fun isValidIndex(index: String?): Boolean = !index.isNullOrBlank() && index.toIntOrNull() != null && isValidIndex(index.toInt())
+
     /**
      * Searches for notes with a title containing a given search string.
      *
